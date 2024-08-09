@@ -20,6 +20,12 @@ features = [
     "toml",
 ]
 
+[dependencies.mimalloc]
+version = "0.1.43"
+features = [
+    "secure"
+]
+
 [dependencies.poem]
 version = "3.0.4"
 features = [

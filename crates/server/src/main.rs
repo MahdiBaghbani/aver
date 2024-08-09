@@ -1,5 +1,15 @@
+use mimalloc::MiMalloc;
 use poem::http::{Method, Uri};
-use poem::{listener::TcpListener, Endpoint, EndpointExt, IntoResponse, Request, Response, Route, Server};
+use poem::{
+    listener::TcpListener,
+    Endpoint,
+    EndpointExt,
+    IntoResponse,
+    Request,
+    Response,
+    Route,
+    Server
+};
 use poem_openapi::OpenApiService;
 use std::time::{Duration, Instant};
 use tracing::{error, info};
@@ -7,6 +17,9 @@ use tracing::{error, info};
 use crate::ocm::endpoints::Ocm;
 mod settings;
 mod ocm;
+
+#[global_allocator]
+static GLOBAL: MiMalloc = MiMalloc;
 
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
