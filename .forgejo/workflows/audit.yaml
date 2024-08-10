@@ -2,19 +2,19 @@ name: Audit
 
 on:
   # schedule daily updates.
-  schedule: [ { cron: "0 0 * * *" } ]
+#  schedule: [ { cron: "0 0 * * *" } ]
   # (optional) run workflow manually.
   workflow_dispatch:
-  push:
-    paths:
-      # run if workflow changes:
-      - ".forgejo/workflows/audit.yaml"
-      # run on changed dependencies:
-      - "**/Cargo.toml"
-      - "**/Cargo.lock"
-      # run if the configuration file changes:
-      - "**/audit.toml"
-  pull_request:
+#  push:
+#    paths:
+#      # run if workflow changes:
+#      - ".forgejo/workflows/audit.yaml"
+#      # run on changed dependencies:
+#      - "**/Cargo.toml"
+#      - "**/Cargo.lock"
+#      # run if the configuration file changes:
+#      - "**/audit.toml"
+#  pull_request:
 
 permissions: read-all
 
