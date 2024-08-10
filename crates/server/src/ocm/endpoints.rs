@@ -1,6 +1,7 @@
+use poem_openapi::{payload::Json, OpenApi};
+
 use crate::ocm::models::{DiscoveryData, DiscoveryResponse};
 use crate::settings::models::OcmProvider;
-use poem_openapi::{payload::Json, OpenApi};
 
 pub struct Ocm;
 

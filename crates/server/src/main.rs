@@ -1,33 +1,42 @@
 use mimalloc::MiMalloc;
-use poem::http::{Method, Uri};
+
 use poem::{
     listener::TcpListener,
-    Endpoint,
     EndpointExt,
-    IntoResponse,
-    Request,
-    Response,
     Route,
-    Server
+    Server,
 };
 use poem_openapi::OpenApiService;
-use std::time::{Duration, Instant};
-use tracing::{error, info};
+use tracing::info;
+use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*, EnvFilter};
 
-use crate::ocm::endpoints::Ocm;
 mod settings;
 mod ocm;
+mod utils;
+
+use crate::ocm::endpoints::Ocm;
+use crate::settings::methods::settings;
+use crate::utils::log::log;
 
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
 
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
-    if std::env::var_os("RUST_LOG").is_none() {
-        std::env::set_var("RUST_LOG", "poem=debug");
-    }
-    tracing_subscriber::fmt::init();
+    // loads the .env file from the current directory or parents.
+    dotenvy::dotenv_override().ok();
 
+    // load settings from toml file.
+    settings::methods::init();
+
+    // setup logging.
+    let filter: EnvFilter = EnvFilter::builder()
+        .with_default_directive(LevelFilter::ERROR.into())
+        .parse_lossy(settings().log.level.clone());
+    let filtered_layer = fmt::layer().with_level(true).with_filter(filter);
+    tracing_subscriber::registry().with(filtered_layer).init();
+
+    info!("⚙️ Settings have been loaded.");
 
     let api_service =
         OpenApiService::new(Ocm, "Hello World", "1.0")
@@ -36,55 +45,11 @@ async fn main() -> Result<(), std::io::Error> {
 
     let app = Route::new()
         .nest("/", api_service)
-        .nest("/swag", ui)
+        .nest("/docs", ui)
         .around(log);
 
-    Server::new(TcpListener::bind("0.0.0.0:3000"))
-        .run(app)
-        .await
-}
+    let tcp_bind: String = settings().server.get_tcp_bind();
+    let tcp_listener: TcpListener<String> = TcpListener::bind(tcp_bind);
 
-async fn log<E: Endpoint>(next: E, req: Request) -> poem::Result<Response> {
-    let method: Method = req.method().clone();
-    let path: Uri = req.uri().clone();
-
-    let start: Instant = Instant::now();
-    let res = next.call(req).await;
-    let elapsed: Duration = start.elapsed();
-
-    match res {
-        Ok(r) => {
-            let resp = r.into_response();
-
-            info!(
-                "{} -> {} {} [ {:?} ] - {:?}",
-                method.as_str(),
-                resp.status().as_u16(),
-                resp.status().canonical_reason().unwrap_or(""),
-                elapsed,
-                path.path(),
-            );
-
-            Ok(resp)
-        }
-        Err(e) => {
-            let msg: String = format!("{}", &e);
-            let resp: Response = e.into_response();
-
-            if resp.status().as_u16() >= 500 {
-                error!("{}", msg);
-            }
-
-            info!(
-                "{} -> {} {} [ {:?} ] - {:?}",
-                method.as_str(),
-                resp.status().as_u16(),
-                resp.status().canonical_reason().unwrap_or(""),
-                elapsed,
-                path.path(),
-            );
-
-            Ok(resp)
-        }
-    }
+    Server::new(tcp_listener).run(app).await
 }

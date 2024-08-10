@@ -106,6 +106,7 @@ dependencies = [
  "config",
  "dotenvy",
  "mimalloc",
+ "once_cell",
  "poem",
  "poem-openapi",
  "reqwest",
