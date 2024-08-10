@@ -1,7 +1,24 @@
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
-pub struct Settings;
+pub struct Settings {
+    pub log: Log,
+    pub server: Server,
+    pub ocm_provider: OcmProvider,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Log {
+    pub level: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Server {
+    pub domain: String,
+    pub scheme: String,
+    pub ip: String,
+    pub port: String,
+}
 
 #[derive(Debug, Deserialize)]
 pub struct OcmProvider {

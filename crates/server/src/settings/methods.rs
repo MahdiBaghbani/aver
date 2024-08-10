@@ -1,8 +1,17 @@
+use config::{Config, ConfigError, Environment, File};
 use std::env;
 
-use config::{Config, ConfigError, Environment, File};
+use crate::settings::models::{Server, Settings};
+use crate::settings::SETTINGS;
 
-use crate::settings::models::Settings;
+pub fn settings() -> &'static Settings {
+    SETTINGS.get().expect("config init")
+}
+
+pub fn init() {
+    let settings: Settings = Settings::new().unwrap();
+    SETTINGS.set(settings).expect("Somehow Darth Sidious has returned!");
+}
 
 impl Settings {
     pub fn new() -> Result<Self, ConfigError> {
@@ -17,5 +26,11 @@ impl Settings {
 
         // deserialize and thus freeze the entire configuration.
         settings.try_deserialize()
+    }
+}
+
+impl Server {
+    pub fn get_tcp_bind(&self) -> String {
+        format!("{}:{}", self.ip, self.port)
     }
 }
