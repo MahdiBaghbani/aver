@@ -36,7 +36,7 @@ features = [
 [dependencies.poem-openapi]
 version = "5.0.3"
 features = [
-    "swagger-ui"
+    "rapidoc",
 ]
 
 [dependencies.reqwest]

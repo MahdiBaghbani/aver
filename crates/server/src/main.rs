@@ -1,5 +1,4 @@
 use mimalloc::MiMalloc;
-
 use poem::{
     listener::TcpListener,
     EndpointExt,
@@ -39,13 +38,18 @@ async fn main() -> Result<(), std::io::Error> {
     info!("⚙️ Settings have been loaded.");
 
     let api_service =
-        OpenApiService::new(Ocm, "Hello World", "1.0")
-            .server("http://localhost:3000");
-    let ui = api_service.swagger_ui();
+        OpenApiService::new(
+            Ocm,
+            "AVER OpenAPI",
+            "1.0",
+        ).server(settings().server.get_url());
+    let ui = api_service.rapidoc();
+    let spec: String = api_service.spec();
 
     let app = Route::new()
         .nest("/", api_service)
         .nest("/docs", ui)
+        .at("/spec", poem::endpoint::make_sync(move |_| spec.clone()))
         .around(log);
 
     let tcp_bind: String = settings().server.get_tcp_bind();

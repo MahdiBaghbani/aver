@@ -30,6 +30,9 @@ impl Settings {
 }
 
 impl Server {
+    pub fn get_url(&self) -> String {
+        format!("{}://{}:{}", self.scheme, self.domain, self.port)
+    }
     pub fn get_tcp_bind(&self) -> String {
         format!("{}:{}", self.ip, self.port)
     }

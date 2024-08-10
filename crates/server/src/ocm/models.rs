@@ -12,6 +12,7 @@ pub enum DiscoveryResponse {
 }
 
 #[derive(Debug, Object, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[oai(rename = "OCM discovery")]
 pub struct DiscoveryData {
     pub enabled: bool,
     #[oai(rename = "apiVersion")]
@@ -28,6 +29,7 @@ pub struct DiscoveryData {
 }
 
 #[derive(Debug, Object, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[oai(rename = "OCM discovery resource types")]
 pub struct ResourceTypes {
     pub name: String,
     #[oai(rename = "shareTypes")]
@@ -37,6 +39,7 @@ pub struct ResourceTypes {
 }
 
 #[derive(Debug, Object, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[oai(rename = "OCM discovery protocols")]
 pub struct Protocols {
     pub webdav: String,
     pub webapp: Option<String>,
