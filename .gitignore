@@ -15,3 +15,7 @@ target/
 *.iml
 out
 gen
+
+# other files
+.env
+.settings.toml
