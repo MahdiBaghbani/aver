@@ -1,0 +1,55 @@
+name: Audit
+
+on:
+  # schedule daily updates.
+  schedule: [ { cron: "0 0 * * *" } ]
+  # (optional) run workflow manually.
+  workflow_dispatch:
+  push:
+    paths:
+      # run if workflow changes:
+      - ".github/workflows/audit.yaml"
+      # run on changed dependencies:
+      - "**/Cargo.toml"
+      - "**/Cargo.lock"
+      # run if the configuration file changes:
+      - "**/audit.toml"
+  pull_request:
+
+permissions: read-all
+
+jobs:
+  general_audit:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        checks:
+          - advisories
+          - bans licenses sources
+
+    # prevent sudden announcement of a new advisory from failing ci:
+    continue-on-error: ${{ matrix.checks == 'advisories' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: EmbarkStudios/cargo-deny-action@v1
+        with:
+          log-level: error
+          command: check ${{ matrix.checks }}
+          arguments: --all-features
+
+  security_audit:
+    runs-on: ubuntu-22.04
+    permissions:
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Audit Rust Dependencies
+        uses: actions-rust-lang/audit@v1
+        with:
+          # comma separated list of issues to ignore.
+          ignore: RUSTSEC-2023-0071
