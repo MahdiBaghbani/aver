@@ -1,5 +1,5 @@
 [package]
-name = "server"
+name = "aver"
 version = "0.1.0"
 
 rust-version.workspace = true
