@@ -13,6 +13,7 @@ mod ocm;
 mod utils;
 
 use crate::ocm::endpoints::{discovery, legacy_discovery};
+use crate::ocm::routes::ocm;
 use crate::settings::methods::settings;
 use crate::utils::log::log;
 
@@ -37,8 +38,9 @@ async fn main() -> Result<(), std::io::Error> {
     info!("⚙️ Settings have been loaded.");
 
     let app = Route::new()
-        .nest("/", discovery)
+        .at("/.well-known/ocm", discovery)
         .at("/ocm-provider", legacy_discovery)
+        .nest(settings().ocm_provider.prefix.clone(), ocm())
         .around(log);
 
     let tcp_bind: String = settings().server.get_tcp_bind();

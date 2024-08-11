@@ -32,3 +32,24 @@ pub struct Protocols {
     pub webapp: Option<String>,
     pub datatx: Option<String>,
 }
+
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+pub struct InviteAcceptedRequestData {
+    #[serde(rename = "recipientProvider")]
+    pub recipient_provider: String,
+    pub token: String,
+    #[serde(rename = "userID")]
+    pub user_id: String,
+    pub email: String,
+    pub name: String,
+
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+pub struct InviteAcceptedResponseData {
+    #[serde(rename = "userID")]
+    pub user_id: String,
+    pub email: String,
+    pub name: String,
+
+}
