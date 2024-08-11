@@ -1,10 +1,24 @@
 use poem::{handler, web::Redirect};
 use poem_openapi::{payload::Json, OpenApi};
 
-use crate::ocm::models::{DiscoveryData, DiscoveryResponse};
+use crate::ocm::models::DiscoveryData;
+use crate::ocm::responses::DiscoveryResponse;
 use crate::settings::methods::settings;
 
+pub struct Ocm;
 pub struct OcmDiscovery;
+
+#[OpenApi]
+impl Ocm {
+    #[oai(path = "/invite-accepted", method = "post")]
+    pub async fn invite_accepted(&self) -> DiscoveryResponse {
+        let discovery_data: DiscoveryData = DiscoveryData::new(
+            settings().ocm_provider.clone()
+        );
+
+        DiscoveryResponse::Ok(Json(discovery_data))
+    }
+}
 
 #[OpenApi]
 impl OcmDiscovery {

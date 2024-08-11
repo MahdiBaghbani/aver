@@ -1,15 +1,5 @@
-use poem_openapi::{
-    payload::Json,
-    ApiResponse, Object,
-};
+use poem_openapi::Object;
 use serde::{Deserialize, Serialize};
-
-#[derive(ApiResponse)]
-pub enum DiscoveryResponse {
-    /// Returns when the user is successfully created.
-    #[oai(status = 200)]
-    Ok(Json<DiscoveryData>),
-}
 
 #[derive(Debug, Object, Clone, Eq, PartialEq, Serialize, Deserialize)]
 #[oai(rename = "OCM discovery")]
