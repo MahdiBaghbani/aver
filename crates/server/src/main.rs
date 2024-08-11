@@ -13,7 +13,7 @@ mod settings;
 mod ocm;
 mod utils;
 
-use crate::ocm::endpoints::{legacy_discovery, Ocm};
+use crate::ocm::endpoints::{legacy_discovery, OcmDiscovery};
 use crate::settings::methods::settings;
 use crate::utils::log::log;
 
@@ -39,7 +39,7 @@ async fn main() -> Result<(), std::io::Error> {
 
     let api_service =
         OpenApiService::new(
-            Ocm,
+            OcmDiscovery,
             "AVER OpenAPI",
             "1.0",
         ).server(settings().server.get_url());
