@@ -1,7 +1,7 @@
 use config::{Config, ConfigError, Environment, File};
 use std::env;
 
-use crate::settings::models::{Server, Settings};
+use crate::settings::models::{OcmProvider, Server, Settings};
 use crate::settings::SETTINGS;
 
 pub fn settings() -> &'static Settings {
@@ -35,5 +35,20 @@ impl Server {
     }
     pub fn get_tcp_bind(&self) -> String {
         format!("{}:{}", self.ip, self.port)
+    }
+}
+
+impl OcmProvider {
+    pub fn clone(&self) -> Self {
+        OcmProvider {
+            enable: self.enable,
+            prefix: self.prefix.clone(),
+            endpoint: self.endpoint.clone(),
+            provider: self.provider.clone(),
+            webdav_root: self.webdav_root.clone(),
+            webapp_root: self.webapp_root.clone(),
+            webapp_enable: self.webapp_enable,
+            datatx_enable: self.datatx_enable,
+        }
     }
 }

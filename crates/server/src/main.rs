@@ -13,7 +13,7 @@ mod settings;
 mod ocm;
 mod utils;
 
-use crate::ocm::endpoints::Ocm;
+use crate::ocm::endpoints::{legacy_discovery, Ocm};
 use crate::settings::methods::settings;
 use crate::utils::log::log;
 
@@ -49,6 +49,7 @@ async fn main() -> Result<(), std::io::Error> {
     let app = Route::new()
         .nest("/", api_service)
         .nest("/docs", ui)
+        .at("/ocm-provider", legacy_discovery)
         .at("/spec", poem::endpoint::make_sync(move |_| spec.clone()))
         .around(log);
 

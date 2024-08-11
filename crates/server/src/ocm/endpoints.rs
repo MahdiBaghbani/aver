@@ -1,27 +1,24 @@
-use poem_openapi::{payload::Json, OpenApi};
+use poem::{handler, web::Redirect};
+use poem_openapi::{payload::Json, ApiResponse, OpenApi};
 
 use crate::ocm::models::{DiscoveryData, DiscoveryResponse};
-use crate::settings::models::OcmProvider;
+use crate::settings::methods::settings;
 
 pub struct Ocm;
+
+
+#[handler]
+pub async fn legacy_discovery() -> Redirect {
+    let uri: String = format!("{}/.well-known/ocm", settings().server.get_url());
+    Redirect::moved_permanent(uri)
+}
 
 #[OpenApi]
 impl Ocm {
     #[oai(path = "/.well-known/ocm", method = "get")]
     pub async fn discovery(&self) -> DiscoveryResponse {
-        let ocm_provider: OcmProvider = OcmProvider {
-            enable: true,
-            prefix: "ocm".to_string(),
-            endpoint: "https://mamad.docker".to_string(),
-            provider: "aver".to_string(),
-            webdav_root: "/dav/ocm".to_string(),
-            webapp_root: "/app/ocm".to_string(),
-            webapp_enable: true,
-            datatx_enable: true,
-        };
-
         let discovery_data: DiscoveryData = DiscoveryData::new(
-            ocm_provider
+            settings().ocm_provider.clone()
         );
 
         DiscoveryResponse::Ok(Json(discovery_data))
