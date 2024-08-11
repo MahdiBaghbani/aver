@@ -26,10 +26,16 @@ impl DiscoveryData {
             protocols,
         };
 
+        let endpoint: String = format!(
+            "{}/{}",
+            ocm_provider.endpoint.clone(),
+            ocm_provider.prefix.clone()
+        );
+
         DiscoveryData {
             enabled: ocm_provider.enable,
             api_version: OCM_API_VERSION.to_string(),
-            end_point: ocm_provider.endpoint.clone(),
+            end_point: endpoint,
             provider: Some(ocm_provider.provider.clone()),
             resource_types: vec![resource_types],
             capabilities: OCM_CAPABILITIES.map(String::from).to_vec(),
