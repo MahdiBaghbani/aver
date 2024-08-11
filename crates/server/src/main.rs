@@ -5,7 +5,6 @@ use poem::{
     Route,
     Server,
 };
-use poem_openapi::OpenApiService;
 use tracing::info;
 use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*, EnvFilter};
 
@@ -13,7 +12,7 @@ mod settings;
 mod ocm;
 mod utils;
 
-use crate::ocm::endpoints::{legacy_discovery, OcmDiscovery};
+use crate::ocm::endpoints::{discovery, legacy_discovery};
 use crate::settings::methods::settings;
 use crate::utils::log::log;
 
@@ -37,20 +36,9 @@ async fn main() -> Result<(), std::io::Error> {
 
     info!("⚙️ Settings have been loaded.");
 
-    let api_service =
-        OpenApiService::new(
-            OcmDiscovery,
-            "AVER OpenAPI",
-            "1.0",
-        ).server(settings().server.get_url());
-    let ui = api_service.rapidoc();
-    let spec: String = api_service.spec();
-
     let app = Route::new()
-        .nest("/", api_service)
-        .nest("/docs", ui)
+        .nest("/", discovery)
         .at("/ocm-provider", legacy_discovery)
-        .at("/spec", poem::endpoint::make_sync(move |_| spec.clone()))
         .around(log);
 
     let tcp_bind: String = settings().server.get_tcp_bind();

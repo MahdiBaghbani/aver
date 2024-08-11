@@ -30,13 +30,6 @@ features = [
 [dependencies.poem]
 version = "3.0.4"
 features = [
-    "tokio-metrics"
-]
-
-[dependencies.poem-openapi]
-version = "5.0.3"
-features = [
-    "rapidoc",
 ]
 
 [dependencies.reqwest]
