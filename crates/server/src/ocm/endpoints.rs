@@ -30,6 +30,19 @@ pub async fn legacy_discovery() -> Redirect {
 }
 
 #[handler]
+pub async fn mfa_capable() -> Response {
+    let status_code: StatusCode = if settings().ocm_provider.capabilities.mfa_capable {
+        StatusCode::OK
+    } else {
+        StatusCode::NOT_FOUND
+    };
+
+    Response::builder()
+        .status(status_code)
+        .finish()
+}
+
+#[handler]
 pub async fn invite_accepted(_req: Json<InviteAcceptedRequestData>) -> Response {
     let resp = InviteAcceptedResponseData {
         user_id: "1".to_string(),
