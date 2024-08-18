@@ -1,6 +1,5 @@
 use poem::{post, Route};
 
-
 use crate::ocm::endpoints::invite_accepted;
 
 pub fn ocm() -> Route {

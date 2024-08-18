@@ -1,5 +1,3 @@
-use crate::ocm::models::{DiscoveryData, InviteAcceptedRequestData, InviteAcceptedResponseData};
-use crate::settings::methods::settings;
 use poem::{
     handler,
     http::StatusCode,
@@ -8,13 +6,15 @@ use poem::{
     Response,
 };
 
+use crate::ocm::models::{DiscoveryData, InviteAcceptedRequestData, InviteAcceptedResponseData};
+use crate::settings::methods::settings;
+
 #[handler]
 pub async fn discovery() -> Response {
     let discovery_data: DiscoveryData = DiscoveryData::new(
         settings().ocm_provider.clone()
     );
 
-    // discovery_data
     let json: String = serde_json::to_string(&discovery_data).unwrap();
 
     Response::builder()
@@ -37,7 +37,6 @@ pub async fn invite_accepted(_req: Json<InviteAcceptedRequestData>) -> Response 
         name: "Mahdi Baghbani".to_string(),
     };
 
-    // discovery_data
     let json: String = serde_json::to_string(&resp).unwrap();
 
     Response::builder()
