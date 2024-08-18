@@ -1,10 +1,10 @@
 use crate::ocm::constants::{OCM_API_VERSION, OCM_CAPABILITIES};
-use crate::ocm::models::{DiscoveryData, Protocols, ResourceTypes};
+use crate::ocm::models::{DiscoveryData, DiscoveryProtocols, DiscoveryResourceTypes};
 use crate::settings::models::OcmProvider;
 
 impl DiscoveryData {
     pub fn new(ocm_provider: OcmProvider) -> Self {
-        let protocols: Protocols = Protocols {
+        let protocols: DiscoveryProtocols = DiscoveryProtocols {
             webdav: ocm_provider.webdav_root.clone(),
             webapp: if ocm_provider.webapp_enable {
                 Some(ocm_provider.webapp_root.clone())
@@ -18,7 +18,7 @@ impl DiscoveryData {
             },
         };
 
-        let resource_types: ResourceTypes = ResourceTypes {
+        let resource_types: DiscoveryResourceTypes = DiscoveryResourceTypes {
             // so far we only support `file`.
             name: "file".to_string(),
             // so far we only support `user`.
