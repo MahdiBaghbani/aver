@@ -4,7 +4,7 @@ use std::collections::HashMap;
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct OcmError {
     pub message: String,
-    pub validation_errors: Option<Vec<OcmValidationError>>
+    pub validation_errors: Option<Vec<OcmValidationError>>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
@@ -19,7 +19,7 @@ pub struct DiscoveryData {
     #[serde(rename = "apiVersion")]
     pub api_version: String,
     #[serde(rename = "endPoint")]
-    pub end_point: String,
+    pub endpoint: String,
     pub provider: Option<String>,
     #[serde(rename = "resourceTypes")]
     pub resource_types: Vec<DiscoveryResourceTypes>,
@@ -115,5 +115,4 @@ pub struct InviteAcceptedResponseData {
     pub user_id: String,
     pub email: String,
     pub name: String,
-
 }
