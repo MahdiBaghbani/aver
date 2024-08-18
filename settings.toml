@@ -1,0 +1,32 @@
+[log]
+level = "info"
+
+[server]
+domain = "localhost"
+scheme = "http"
+ip = "0.0.0.0"
+port = "3000"
+
+[ocm_provider]
+enable = true
+prefix = "ocm"
+endpoint = "http://localhost:3000"
+provider = "Aver (Reva but backwards)"
+
+[ocm_provider.capabilities]
+mfa_capable = true
+notifications = true
+invite_accepted = true
+
+[[ocm_provider.resource_types]]
+name = "file"
+
+[ocm_provider.resource_types.share_types]
+user = true
+group = true
+federation = true
+
+[ocm_provider.resource_types.protocols]
+webdav = "/dav"
+webapp = "/app"
+datatx = "/dav"
