@@ -1,6 +1,3 @@
-use config::{Config, ConfigError, Environment, File};
-use std::env;
-
 use crate::http::services::ocm::models::{DiscoveryProtocols, DiscoveryResourceTypes};
 use crate::settings::models::{
     OcmProvider,
@@ -12,6 +9,9 @@ use crate::settings::models::{
     Settings,
 };
 use crate::settings::SETTINGS;
+use config::{Config, ConfigError, Environment, File};
+use std::env;
+use tracing::debug;
 
 pub fn settings() -> &'static Settings {
     SETTINGS.get().expect("config init")
@@ -19,7 +19,10 @@ pub fn settings() -> &'static Settings {
 
 pub fn init() {
     let settings: Settings = Settings::new().unwrap();
-    println!("{:#?}", settings);
+
+    // show loaded settings.
+    debug!("{:#?}", settings);
+
     SETTINGS.set(settings).expect("Somehow Darth Sidious has returned!");
 }
 
