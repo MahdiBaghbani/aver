@@ -1,7 +1,7 @@
 use config::{Config, ConfigError, Environment, File};
 use std::env;
 
-use crate::ocm::models::{DiscoveryProtocols, DiscoveryResourceTypes};
+use crate::http::services::ocm::models::{DiscoveryProtocols, DiscoveryResourceTypes};
 use crate::settings::models::{
     OcmProvider,
     OcmProviderCapabilities,
