@@ -1,26 +1,20 @@
-use poem::{
-    handler,
-    http::StatusCode,
-    web::Json,
-    web::Redirect,
-    Response,
-};
+use poem::http::header::CONTENT_TYPE;
+use poem::http::HeaderMap;
+use poem::{handler, http::StatusCode, web::Json, web::Redirect, IntoResponse};
 
 use crate::ocm::models::{DiscoveryData, InviteAcceptedRequestData, InviteAcceptedResponseData};
 use crate::settings::methods::settings;
 
 #[handler]
-pub async fn discovery() -> Response {
+pub async fn discovery() -> impl IntoResponse {
     let discovery_data: DiscoveryData = DiscoveryData::new(
         settings().ocm_provider.clone()
     );
 
-    let json: String = serde_json::to_string(&discovery_data).unwrap();
+    let mut headers: HeaderMap = HeaderMap::try_with_capacity(1).unwrap();
+    headers.insert(CONTENT_TYPE, "application/hal+json".parse().unwrap());
 
-    Response::builder()
-        .status(StatusCode::OK)
-        .content_type("application/hal+json")
-        .body(json)
+    (StatusCode::OK, headers, Json(discovery_data))
 }
 
 #[handler]
@@ -30,30 +24,21 @@ pub async fn legacy_discovery() -> Redirect {
 }
 
 #[handler]
-pub async fn mfa_capable() -> Response {
-    let status_code: StatusCode = if settings().ocm_provider.capabilities.mfa_capable {
+pub async fn mfa_capable() -> impl IntoResponse {
+    if settings().ocm_provider.capabilities.mfa_capable {
         StatusCode::OK
     } else {
         StatusCode::NOT_FOUND
-    };
-
-    Response::builder()
-        .status(status_code)
-        .finish()
+    }
 }
 
 #[handler]
-pub async fn invite_accepted(_req: Json<InviteAcceptedRequestData>) -> Response {
+pub async fn invite_accepted(_req: Json<InviteAcceptedRequestData>) -> impl IntoResponse {
     let resp = InviteAcceptedResponseData {
         user_id: "1".to_string(),
         email: "mahdi-baghbani@azadehafzar.io".to_string(),
         name: "Mahdi Baghbani".to_string(),
     };
 
-    let json: String = serde_json::to_string(&resp).unwrap();
-
-    Response::builder()
-        .status(StatusCode::OK)
-        .content_type("application/json")
-        .body(json)
+    (StatusCode::OK, Json(resp))
 }
