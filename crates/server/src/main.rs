@@ -33,7 +33,6 @@ async fn main() -> Result<(), std::io::Error> {
 
     info!("⚙️ Settings have been loaded.");
 
-
     let tcp_bind: String = settings().server.get_tcp_bind();
     let tcp_listener: TcpListener<String> = TcpListener::bind(tcp_bind);
 
