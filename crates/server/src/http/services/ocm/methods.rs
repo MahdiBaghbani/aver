@@ -1,5 +1,5 @@
-use crate::ocm::constants::OCM_API_VERSION;
-use crate::ocm::models::{DiscoveryData, DiscoveryResourceTypes};
+use crate::http::services::ocm::constants::OCM_API_VERSION;
+use crate::http::services::ocm::models::{DiscoveryData, DiscoveryResourceTypes};
 use crate::settings::models::OcmProvider;
 
 impl DiscoveryData {

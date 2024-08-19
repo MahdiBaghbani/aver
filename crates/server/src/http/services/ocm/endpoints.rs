@@ -1,8 +1,18 @@
 use poem::http::header::CONTENT_TYPE;
 use poem::http::HeaderMap;
-use poem::{handler, http::StatusCode, web::Json, web::Redirect, IntoResponse};
+use poem::{
+    handler,
+    http::StatusCode,
+    web::Json,
+    web::Redirect,
+    IntoResponse
+};
 
-use crate::ocm::models::{DiscoveryData, InviteAcceptedRequestData, InviteAcceptedResponseData};
+use crate::http::services::ocm::models::{
+    DiscoveryData,
+    InviteAcceptedRequestData,
+    InviteAcceptedResponseData
+};
 use crate::settings::methods::settings;
 
 #[handler]
