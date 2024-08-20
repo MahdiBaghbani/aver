@@ -6,9 +6,8 @@ use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*, EnvFilter};
 mod settings;
 mod http;
 
-use crate::http::endpoints::test;
-use crate::http::router::routes;
 use crate::settings::methods::settings;
+use crate::http::application;
 
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
@@ -33,7 +32,5 @@ async fn main() -> Result<(), std::io::Error> {
     let tcp_bind: String = settings().server.get_tcp_bind();
     let tcp_listener: TcpListener<String> = TcpListener::bind(tcp_bind);
 
-    test().await.expect("TODO: panic message");
-
-    Server::new(tcp_listener).run(routes()).await
+    Server::new(tcp_listener).run(application()).await
 }

@@ -12,7 +12,7 @@ use crate::http::utils::log::log;
 use crate::http::utils::panic::PanicHandler;
 use crate::settings::methods::settings;
 
-pub fn routes() -> impl Endpoint {
+pub fn application() -> impl Endpoint {
     Route::new()
         .nest("/", services())
         .with(NormalizePath::new(TrailingSlash::Trim))
