@@ -1,7 +1,8 @@
 use poem::http::StatusCode;
 use std::any::Any;
 
-use crate::http::models::PanicHandler;
+#[derive(Clone, Debug)]
+pub struct PanicHandler {}
 
 impl PanicHandler {
     pub fn new() -> Self {

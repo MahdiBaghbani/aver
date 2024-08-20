@@ -1,15 +1,12 @@
 use mimalloc::MiMalloc;
-use poem::{
-    listener::TcpListener,
-    Server,
-};
+use poem::{listener::TcpListener, Server};
 use tracing::info;
 use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*, EnvFilter};
 
 mod settings;
-mod utils;
 mod http;
 
+use crate::http::endpoints::test;
 use crate::http::router::routes;
 use crate::settings::methods::settings;
 
@@ -35,6 +32,8 @@ async fn main() -> Result<(), std::io::Error> {
 
     let tcp_bind: String = settings().server.get_tcp_bind();
     let tcp_listener: TcpListener<String> = TcpListener::bind(tcp_bind);
+
+    test().await.expect("TODO: panic message");
 
     Server::new(tcp_listener).run(routes()).await
 }

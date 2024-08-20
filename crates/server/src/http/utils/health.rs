@@ -1,3 +1,5 @@
+use poem::web::Json;
+use poem::{handler, IntoResponse};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -11,5 +13,9 @@ pub struct HealthCheckResponse {
     pub status: HealthCheckStatus,
 }
 
-#[derive(Clone, Debug)]
-pub struct PanicHandler {}
+#[handler]
+pub async fn health() -> impl IntoResponse {
+    Json(HealthCheckResponse {
+        status: HealthCheckStatus::Pass,
+    })
+}
