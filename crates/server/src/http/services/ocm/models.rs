@@ -4,12 +4,15 @@ use std::collections::HashMap;
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct OcmError {
     pub message: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub validation_errors: Option<Vec<OcmValidationError>>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct OcmValidationError {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
 }
 
@@ -20,6 +23,7 @@ pub struct DiscoveryData {
     pub api_version: String,
     #[serde(rename = "endPoint")]
     pub endpoint: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub provider: Option<String>,
     #[serde(rename = "resourceTypes")]
     pub resource_types: Vec<DiscoveryResourceTypes>,
@@ -37,7 +41,9 @@ pub struct DiscoveryResourceTypes {
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct DiscoveryProtocols {
     pub webdav: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub webapp: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub datatx: Option<String>,
 }
 
@@ -46,14 +52,15 @@ pub struct ShareRequestData {
     #[serde(rename = "ShareWith")]
     pub share_with: String,
     pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     #[serde(rename = "providerId")]
     pub provider_id: String,
     pub owner: String,
     pub sender: String,
-    #[serde(rename = "ownerDisplayName")]
+    #[serde(rename = "ownerDisplayName", skip_serializing_if = "Option::is_none")]
     pub owner_display_name: Option<String>,
-    #[serde(rename = "senderDisplayName")]
+    #[serde(rename = "senderDisplayName", skip_serializing_if = "Option::is_none")]
     pub sender_display_name: Option<String>,
     #[serde(rename = "shareType")]
     pub share_type: String,
@@ -66,15 +73,19 @@ pub struct ShareRequestData {
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ShareRequestProtocol {
     pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub webdav: Option<ShareProtocolWebdav>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub webapp: Option<ShareProtocolWebapp>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub datatx: Option<ShareProtocolDatatx>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ShareProtocolWebdav {
-    #[serde(rename = "sharedSecret")]
+    #[serde(rename = "sharedSecret", skip_serializing_if = "Option::is_none")]
     pub shared_secret: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub permissions: Option<Vec<String>>,
     pub uri: String,
 }
@@ -85,13 +96,13 @@ pub struct ShareProtocolWebapp {
     pub uri_template: String,
     #[serde(rename = "viewMode")]
     pub view_mode: String,
-    #[serde(rename = "sharedSecret")]
+    #[serde(rename = "sharedSecret", skip_serializing_if = "Option::is_none")]
     pub shared_secret: Option<String>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ShareProtocolDatatx {
-    #[serde(rename = "sharedSecret")]
+    #[serde(rename = "sharedSecret", skip_serializing_if = "Option::is_none")]
     pub shared_secret: Option<String>,
     #[serde(rename = "srcUri")]
     pub src_uri: String,
