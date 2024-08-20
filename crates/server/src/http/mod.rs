@@ -1,9 +1,11 @@
 pub mod services;
 pub mod utils;
+pub mod middlewares;
 
 use poem::middleware::{CatchPanic, NormalizePath, TrailingSlash};
-use poem::{get, Endpoint, EndpointExt, Route};
+use poem::{get, post, Endpoint, EndpointExt, Route};
 
+use crate::http::middlewares::auth::endpoints::create_token;
 use crate::http::services::ocm::endpoints::legacy_discovery;
 use crate::http::services::ocm::router::ocm;
 use crate::http::services::wellknown::router::wellknown;
@@ -32,4 +34,5 @@ fn root() -> impl Endpoint {
     Route::new()
         .at("/ocm-provider", get(legacy_discovery))
         .at("/health", get(health))
+        .at("/token", post(create_token))
 }
