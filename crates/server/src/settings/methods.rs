@@ -1,4 +1,11 @@
-use crate::http::services::ocm::models::{DiscoveryProtocols, DiscoveryResourceTypes};
+use config::{Config, ConfigError, Environment, File};
+use std::env;
+use tracing::debug;
+
+use crate::http::services::ocm::models::{
+    DiscoveryProtocols,
+    DiscoveryResourceTypes,
+};
 use crate::settings::models::{
     OcmProvider,
     OcmProviderCapabilities,
@@ -9,9 +16,6 @@ use crate::settings::models::{
     Settings,
 };
 use crate::settings::SETTINGS;
-use config::{Config, ConfigError, Environment, File};
-use std::env;
-use tracing::debug;
 
 pub fn settings() -> &'static Settings {
     SETTINGS.get().expect("config init")
