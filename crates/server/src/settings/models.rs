@@ -18,6 +18,13 @@ pub struct Server {
     pub scheme: String,
     pub ip: String,
     pub port: String,
+    pub mode: ServerMode,
+}
+
+#[derive(Debug, Deserialize)]
+pub enum ServerMode {
+    Development,
+    Production,
 }
 
 #[derive(Debug, Deserialize)]
