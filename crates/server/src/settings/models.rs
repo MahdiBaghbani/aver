@@ -4,6 +4,7 @@ use serde::Deserialize;
 pub struct Settings {
     pub log: Log,
     pub server: Server,
+    pub database: Database,
     pub ocm: Ocm,
 }
 
@@ -25,6 +26,16 @@ pub struct Server {
 pub enum ServerMode {
     Development,
     Production,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Database {
+    pub redb: Redb,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Redb {
+    pub path: String,
 }
 
 #[derive(Debug, Deserialize)]
