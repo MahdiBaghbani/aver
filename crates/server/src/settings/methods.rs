@@ -1,19 +1,18 @@
 use config::{Config, ConfigError, Environment, File};
 use std::env;
-use tracing::debug;
 
 use crate::http::services::ocm::models::{
     DiscoveryProtocols,
     DiscoveryResourceTypes,
 };
 use crate::settings::models::{
+    Ocm,
     OcmProvider,
     OcmProviderCapabilities,
     OcmProviderProtocols,
     OcmProviderResourceTypes,
     OcmProviderShareTypes,
-    Server,
-    Settings,
+    Server, Settings,
 };
 use crate::settings::SETTINGS;
 
@@ -23,10 +22,6 @@ pub fn settings() -> &'static Settings {
 
 pub fn init() {
     let settings: Settings = Settings::new().unwrap();
-
-    // show loaded settings.
-    debug!("{:#?}", settings);
-
     SETTINGS.set(settings).expect("Somehow Darth Sidious has returned!");
 }
 
@@ -52,6 +47,14 @@ impl Server {
     }
     pub fn get_tcp_bind(&self) -> String {
         format!("{}:{}", self.ip, self.port)
+    }
+}
+
+impl Clone for Ocm {
+    fn clone(&self) -> Self {
+        Ocm {
+            provider: self.provider.clone(),
+        }
     }
 }
 

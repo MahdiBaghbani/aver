@@ -1,13 +1,13 @@
 use mimalloc::MiMalloc;
 use poem::{listener::TcpListener, Server};
-use tracing::info;
+use tracing::{debug, info};
 use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*, EnvFilter};
 
 mod settings;
 mod http;
 
-use crate::settings::methods::settings;
 use crate::http::application;
+use crate::settings::methods::settings;
 
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
@@ -26,9 +26,10 @@ async fn main() -> Result<(), std::io::Error> {
         .parse_lossy(settings().log.level.clone());
     let filtered_layer = fmt::layer().with_level(true).with_filter(filter);
     tracing_subscriber::registry().with(filtered_layer).init();
-
+    
     info!("⚙️ Settings have been loaded.");
-
+    debug!("{:#?}", settings());
+    
     let tcp_bind: String = settings().server.get_tcp_bind();
     let tcp_listener: TcpListener<String> = TcpListener::bind(tcp_bind);
 

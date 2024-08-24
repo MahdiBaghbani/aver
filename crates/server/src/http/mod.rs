@@ -27,7 +27,7 @@ fn services() -> impl Endpoint {
     Route::new()
         .nest("/", root())
         .nest("/.well-known", wellknown())
-        .nest(settings().ocm_provider.prefix.clone(), ocm())
+        .nest(settings().ocm.provider.prefix.clone(), ocm())
 }
 
 fn root() -> impl Endpoint {

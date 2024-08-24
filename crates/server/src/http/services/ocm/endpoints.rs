@@ -18,7 +18,7 @@ use crate::settings::methods::settings;
 #[handler]
 pub async fn discovery() -> impl IntoResponse {
     let discovery_data: DiscoveryData = DiscoveryData::new(
-        settings().ocm_provider.clone()
+        settings().ocm.provider.clone()
     );
 
     let mut headers: HeaderMap = HeaderMap::try_with_capacity(1).unwrap();
@@ -35,7 +35,7 @@ pub async fn legacy_discovery() -> Redirect {
 
 #[handler]
 pub async fn mfa_capable() -> impl IntoResponse {
-    if settings().ocm_provider.capabilities.mfa_capable {
+    if settings().ocm.provider.capabilities.mfa_capable {
         StatusCode::OK
     } else {
         StatusCode::NOT_FOUND
