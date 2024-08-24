@@ -14,16 +14,6 @@ use crate::settings::models::{
     OcmProviderShareTypes,
     Server, Settings,
 };
-use crate::settings::SETTINGS;
-
-pub fn settings() -> &'static Settings {
-    SETTINGS.get().expect("config init")
-}
-
-pub fn init() {
-    let settings: Settings = Settings::new().unwrap();
-    SETTINGS.set(settings).expect("Somehow Darth Sidious has returned!");
-}
 
 impl Settings {
     pub fn new() -> Result<Self, ConfigError> {
