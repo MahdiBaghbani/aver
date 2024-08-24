@@ -12,7 +12,7 @@ use crate::http::services::wellknown::router::wellknown;
 use crate::http::utils::health::health;
 use crate::http::utils::log::log;
 use crate::http::utils::panic::PanicHandler;
-use crate::settings::methods::settings;
+use crate::settings::settings;
 
 pub fn application() -> impl Endpoint {
     Route::new()

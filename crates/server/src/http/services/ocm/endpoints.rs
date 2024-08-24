@@ -5,15 +5,15 @@ use poem::{
     http::StatusCode,
     web::Json,
     web::Redirect,
-    IntoResponse
+    IntoResponse,
 };
 
 use crate::http::services::ocm::models::{
     DiscoveryData,
     InviteAcceptedRequestData,
-    InviteAcceptedResponseData
+    InviteAcceptedResponseData,
 };
-use crate::settings::methods::settings;
+use crate::settings::settings;
 
 #[handler]
 pub async fn discovery() -> impl IntoResponse {
