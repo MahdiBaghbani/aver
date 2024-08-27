@@ -3,7 +3,9 @@ use poem::{listener::TcpListener, Server};
 use tracing::{debug, info};
 use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*, EnvFilter};
 
+mod http;
 mod settings;
+mod errors;
 
 use crate::settings::settings;
 
