@@ -18,4 +18,5 @@ gen
 
 # other files
 .env
-.settings.toml
+.settings.aver.toml
+.settings.gnap.toml
