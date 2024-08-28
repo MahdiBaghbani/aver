@@ -6,6 +6,7 @@ use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*, EnvFilter};
 mod http;
 mod settings;
 mod errors;
+mod models;
 
 use crate::http::application;
 use crate::settings::settings;

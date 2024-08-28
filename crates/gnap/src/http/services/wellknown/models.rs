@@ -1,6 +1,6 @@
-//! This follows openid-connect-discovery-1_0
 use serde::{self, Deserialize, Serialize};
 
+// this follows openid-connect-discovery-1_0
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OpenIDConfiguration {
     pub issuer: String,
@@ -77,25 +77,25 @@ pub struct GnapOptions {
     pub token_formats_supported: Vec<String>,
     pub interaction_start_modes_supported: Option<Vec<String>>,
 
-    /// A list of the AS's interaction finish methods.  The values of this
+    /// a list of the AS's interaction finish methods. The values of this
     /// list correspond to the possible values for the method element of
     /// the interaction finish section (Section 2.5.2) of the request.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub interaction_finish_methods_supported: Option<Vec<String>>,
 
-    /// A list of the AS's supported key proofing mechanisms.  The values of
+    /// a list of the AS's supported key proofing mechanisms. The values of
     /// this list correspond to possible values of the "proof" field of the key
-    ///  section (Section 7.1) of the request.
+    /// section (Section 7.1) of the request.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub key_proofs_supported: Option<Vec<String>>,
 
-    /// A list of the AS's supported subject identifier types.  The values
+    /// a list of the AS's supported subject identifier types.  The values
     /// of this list correspond to possible values of the subject identifier
     /// section (Section 2.2) of the request.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub subject_formats_supported: Option<Vec<String>>,
 
-    /// A list of the AS's supported assertion formats.  The values of this
+    /// a list of the AS's supported assertion formats.  The values of this
     /// list correspond to possible values of the subject assertion section
     /// (Section 2.2) of the request.
     #[serde(skip_serializing_if = "Option::is_none")]
