@@ -1,17 +1,17 @@
-pub mod services;
-pub mod utils;
-pub mod middlewares;
-
 use poem::middleware::{CatchPanic, NormalizePath, TrailingSlash};
 use poem::{get, post, Endpoint, EndpointExt, Route};
+
+use aver_common::http::utils::health::health;
+use aver_common::http::utils::log::log;
+use aver_common::http::utils::panic::PanicHandler;
+
+pub mod services;
+pub mod middlewares;
 
 use crate::http::middlewares::auth::endpoints::create_token;
 use crate::http::services::ocm::endpoints::legacy_discovery;
 use crate::http::services::ocm::router::ocm;
 use crate::http::services::wellknown::router::wellknown;
-use crate::http::utils::health::health;
-use crate::http::utils::log::log;
-use crate::http::utils::panic::PanicHandler;
 use crate::settings::settings;
 
 pub fn application() -> impl Endpoint {

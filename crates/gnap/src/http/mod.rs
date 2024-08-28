@@ -1,14 +1,14 @@
-pub mod services;
-pub mod utils;
-pub mod middlewares;
-
 use poem::middleware::{CatchPanic, NormalizePath, TrailingSlash};
 use poem::{get, Endpoint, EndpointExt, Route};
 
+use aver_common::http::utils::health::health;
+use aver_common::http::utils::log::log;
+use aver_common::http::utils::panic::PanicHandler;
+
+pub mod services;
+pub mod middlewares;
+
 use crate::http::services::wellknown::router::wellknown;
-use crate::http::utils::health::health;
-use crate::http::utils::log::log;
-use crate::http::utils::panic::PanicHandler;
 
 pub fn application() -> impl Endpoint {
     Route::new()
