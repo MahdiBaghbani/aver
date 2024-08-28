@@ -54,3 +54,9 @@ version = "0.3.18"
 features = [
     "env-filter",
 ]
+
+[dependencies.uuid]
+version = "1.10.0"
+features = [
+    "v4",
+]
