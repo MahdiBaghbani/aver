@@ -7,6 +7,7 @@ mod http;
 mod settings;
 mod errors;
 
+use crate::http::application;
 use crate::settings::settings;
 
 #[global_allocator]
