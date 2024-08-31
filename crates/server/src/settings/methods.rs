@@ -5,15 +5,7 @@ use crate::http::services::ocm::models::{
     DiscoveryProtocols,
     DiscoveryResourceTypes,
 };
-use crate::settings::models::{
-    Ocm,
-    OcmProvider,
-    OcmProviderCapabilities,
-    OcmProviderProtocols,
-    OcmProviderResourceTypes,
-    OcmProviderShareTypes,
-    Server, Settings,
-};
+use crate::settings::models::{Database, Ocm, OcmProvider, OcmProviderCapabilities, OcmProviderProtocols, OcmProviderResourceTypes, OcmProviderShareTypes, Server, Settings};
 
 impl Settings {
     pub fn new() -> Result<Self, ConfigError> {
@@ -37,6 +29,12 @@ impl Server {
     }
     pub fn get_tcp_bind(&self) -> String {
         format!("{}:{}", self.ip, self.port)
+    }
+}
+
+impl Database {
+    pub fn get_db_file_path(&self) -> String {
+        self.redb.path.clone()
     }
 }
 

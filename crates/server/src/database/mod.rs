@@ -1,6 +1,7 @@
-use crate::settings::settings;
 use native_db::{Builder, Database, Models};
 use once_cell::sync::{Lazy, OnceCell};
+
+use crate::settings::settings;
 
 pub mod models;
 
@@ -21,7 +22,7 @@ pub fn database() -> &'static Database<'static> {
 pub fn init() {
     let database: Database = Builder::new().create(
         &DATABASE_MODELS,
-        settings().database.redb.path.clone(),
+        settings().database.get_db_file_path(),
     ).unwrap();
     DATABASE.set(database).ok();
 }
