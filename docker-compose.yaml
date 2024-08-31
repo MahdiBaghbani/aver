@@ -1,0 +1,11 @@
+services:
+  postgres:
+    image: "postgres:16.4-alpine3.20"
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      POSTGRES_DB: "aver"
+      POSTGRES_PASSWORD: "aver"
+      POSTGRES_USER: "aver"
+    ports:
+      - "5432:5432"
