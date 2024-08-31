@@ -8,8 +8,11 @@ pub mod models;
 pub static DATABASE_MODELS: Lazy<Models> = Lazy::new(|| {
     let mut models: Models = Models::new();
     models
-        .define::<models::user::v1::User>()
-        .expect("failed to define model User");
+        .define::<models::user::v1::UserInternal>()
+        .expect("failed to define model UserInternal");
+    models
+        .define::<models::user::v1::UserFederated>()
+        .expect("failed to define model UserFederated");
     models
 });
 
