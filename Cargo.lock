@@ -393,6 +393,7 @@ version = "0.1.0"
 dependencies = [
  "aver-common",
  "aver-database",
+ "aver-database-entity",
  "chrono",
  "config",
  "dav-server",
