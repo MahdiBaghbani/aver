@@ -43,7 +43,7 @@ pub async fn mfa_capable() -> impl IntoResponse {
 }
 
 #[handler]
-pub async fn invite_accepted(_req: Json<InviteAcceptedRequestData>) -> impl IntoResponse {
+pub async fn invite_accepted(Json(_request): Json<InviteAcceptedRequestData>) -> impl IntoResponse {
     let resp = InviteAcceptedResponseData {
         user_id: "1".to_string(),
         email: "mahdi-baghbani@azadehafzar.io".to_string(),
