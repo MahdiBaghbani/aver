@@ -16,6 +16,15 @@ path = "src/lib.rs"
 [dependencies]
 tracing = "0.1.40"
 
+[dependencies.aver-database]
+path = "../database"
+
+[dependencies.aver-database-entity]
+path = "../entity"
+
+[dependencies.aver-database-migration]
+path = "../migration"
+
 [dependencies.poem]
 version = "3.0.4"
 
