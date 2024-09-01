@@ -14,7 +14,9 @@ name = "aver_database"
 path = "src/lib.rs"
 
 [dependencies]
-aver-database-entity = { path = "../entity" }
+
+[dependencies.aver-database-entity]
+path = "../entity"
 
 [dependencies.sea-orm]
 version = "1.0.1"
