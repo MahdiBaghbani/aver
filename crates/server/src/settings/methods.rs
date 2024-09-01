@@ -68,6 +68,9 @@ impl Clone for OcmProvider {
 }
 
 impl OcmProvider {
+    pub fn get_prefix(&self) -> String {
+        self.prefix.clone()
+    }
     pub fn get_ocm_endpoint(&self) -> String {
         format!(
             "{}/{}",
