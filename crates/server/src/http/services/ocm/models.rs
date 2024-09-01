@@ -110,6 +110,11 @@ pub struct ShareProtocolDatatx {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+pub struct CreateInviteTokenRequestData {
+    pub user_id: String,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct InviteAcceptedRequestData {
     #[serde(rename = "recipientProvider")]
     pub recipient_provider: String,

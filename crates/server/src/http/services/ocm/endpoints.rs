@@ -1,18 +1,26 @@
+use poem::error::InternalServerError;
 use poem::http::header::CONTENT_TYPE;
 use poem::http::HeaderMap;
+use poem::web::Data;
 use poem::{
     handler,
     http::StatusCode,
     web::Json,
     web::Redirect,
     IntoResponse,
+    Result,
 };
+use uuid::Uuid;
+
+use aver_database::ocm::mutation::Mutation;
 
 use crate::http::services::ocm::models::{
+    CreateInviteTokenRequestData,
     DiscoveryData,
     InviteAcceptedRequestData,
     InviteAcceptedResponseData,
 };
+use crate::models::ApplicationState;
 use crate::settings::settings;
 
 #[handler]
@@ -40,6 +48,23 @@ pub async fn mfa_capable() -> impl IntoResponse {
     } else {
         StatusCode::NOT_FOUND
     }
+}
+
+#[handler]
+pub async fn create_invite_token(
+    state: Data<&ApplicationState>,
+    Json(data): Json<CreateInviteTokenRequestData>,
+) -> Result<impl IntoResponse> {
+    let token: String = Uuid::new_v4().to_string();
+    let user_id: Uuid = Uuid::parse_str(&data.user_id).map_err(InternalServerError)?;
+
+    Mutation::create_token(
+        &state.database,
+        user_id,
+        token,
+    ).await.map_err(InternalServerError)?;
+
+    Ok(StatusCode::CREATED)
 }
 
 #[handler]
