@@ -12,8 +12,6 @@ impl MigrationTrait for Migration {
             .col(string(Users::LastName))
             .col(string_uniq(Users::Username))
             .col(string(Users::Password))
-            .col(uuid(Users::CreatedBy))
-            .col(uuid(Users::UpdatedBy))
             .to_owned();
 
         manager.create_table(table).await?;
@@ -55,6 +53,4 @@ pub enum Users {
     LastName,
     Username,
     Password,
-    CreatedBy,
-    UpdatedBy,
 }

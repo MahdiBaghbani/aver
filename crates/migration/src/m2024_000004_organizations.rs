@@ -10,8 +10,6 @@ impl MigrationTrait for Migration {
         let table: TableCreateStatement = table_auto(Organizations::Table)
             .col(uuid(Organizations::Id).unique_key().primary_key())
             .col(string(Organizations::Name))
-            .col(uuid_null(Organizations::CreatedBy))
-            .col(uuid_null(Organizations::UpdatedBy))
             .to_owned();
 
         manager.create_table(table).await?;
@@ -50,6 +48,4 @@ enum Organizations {
     Table,
     Id,
     Name,
-    CreatedBy,
-    UpdatedBy,
 }

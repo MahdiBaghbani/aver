@@ -1,5 +1,5 @@
-use sea_orm_migration::{prelude::*, schema::*};
 use crate::m2024_000001_users::Users;
+use sea_orm_migration::{prelude::*, schema::*};
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -10,8 +10,6 @@ impl MigrationTrait for Migration {
         let table: TableCreateStatement = table_auto(Roles::Table)
             .col(uuid(Roles::Id).unique_key().primary_key())
             .col(string(Roles::Name))
-            .col(uuid(Roles::CreatedBy))
-            .col(uuid(Roles::UpdatedBy))
             .to_owned();
 
         manager.create_table(table).await?;
@@ -34,13 +32,13 @@ impl MigrationTrait for Migration {
                 .name("idx-role-name")
                 .to_owned()
         ).await?;
-        
+
         manager.drop_table(
             Table::drop()
                 .table(Roles::Table)
                 .to_owned()
         ).await?;
-        
+
         Ok(())
     }
 }
@@ -50,6 +48,4 @@ enum Roles {
     Table,
     Id,
     Name,
-    CreatedBy,
-    UpdatedBy,
 }

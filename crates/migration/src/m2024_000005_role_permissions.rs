@@ -10,11 +10,9 @@ impl MigrationTrait for Migration {
             .col(uuid(RolePermissions::Id).unique_key().primary_key())
             .col(uuid(RolePermissions::RoleId))
             .col(uuid(RolePermissions::PermissionId))
-            .col(uuid_null(RolePermissions::CreatedBy))
-            .col(uuid_null(RolePermissions::UpdatedBy))
             .foreign_key(
                 ForeignKey::create()
-                    .name("fk-role_permissions-roles")
+                    .name("fk-role-permissions-roles")
                     .from(RolePermissions::Table, RolePermissions::RoleId)
                     .to(Roles::Table, Roles::Id)
                     .on_delete(ForeignKeyAction::Cascade)
@@ -22,7 +20,7 @@ impl MigrationTrait for Migration {
             )
             .foreign_key(
                 ForeignKey::create()
-                    .name("fk-role_permissions-permissions")
+                    .name("fk-role-permissions-permissions")
                     .from(RolePermissions::Table, RolePermissions::PermissionId)
                     .to(Permissions::Table, Permissions::Id)
                     .on_delete(ForeignKeyAction::Cascade)
@@ -37,13 +35,15 @@ impl MigrationTrait for Migration {
             .if_not_exists()
             .name("idx-role-permissions-role-id")
             .table(RolePermissions::Table)
-            .col(RolePermissions::RoleId).to_owned();
+            .col(RolePermissions::RoleId)
+            .to_owned();
 
         let idx_permission_id: IndexCreateStatement = Index::create()
             .if_not_exists()
             .name("idx-role-permissions-permission-id")
             .table(RolePermissions::Table)
-            .col(RolePermissions::PermissionId).to_owned();
+            .col(RolePermissions::PermissionId)
+            .to_owned();
 
         manager.create_index(idx_role_id).await?;
         manager.create_index(idx_permission_id).await?;
@@ -52,12 +52,23 @@ impl MigrationTrait for Migration {
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        manager
-            .drop_table(
-                Table::drop()
-                    .table(RolePermissions::Table)
-                    .to_owned()
-            ).await
+        manager.drop_index(
+            Index::drop()
+                .name("idx-role-permissions-role-id")
+                .to_owned()
+        ).await?;
+
+        manager.drop_index(
+            Index::drop()
+                .name("idx-role-permissions-permission-id")
+                .to_owned()
+        ).await?;
+
+        manager.drop_table(
+            Table::drop()
+                .table(RolePermissions::Table)
+                .to_owned()
+        ).await
     }
 }
 
@@ -67,8 +78,6 @@ enum RolePermissions {
     Id,
     RoleId,
     PermissionId,
-    CreatedBy,
-    UpdatedBy,
 }
 
 #[derive(DeriveIden)]

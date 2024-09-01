@@ -10,8 +10,6 @@ impl MigrationTrait for Migration {
         let table: TableCreateStatement = table_auto(Permissions::Table)
             .col(uuid(Permissions::Id).unique_key().primary_key())
             .col(string(Permissions::Name))
-            .col(uuid(Permissions::CreatedBy))
-            .col(uuid(Permissions::UpdatedBy))
             .to_owned();
 
         manager.create_table(table).await?;
@@ -50,6 +48,4 @@ enum Permissions {
     Table,
     Id,
     Name,
-    CreatedBy,
-    UpdatedBy,
 }

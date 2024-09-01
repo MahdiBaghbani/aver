@@ -8,7 +8,7 @@ mod m2024_000002_roles;
 mod m2024_000003_permissions;
 mod m2024_000004_organizations;
 mod m2024_000005_role_permissions;
-mod m2024_000006_user_organization_roles;
+mod m2024_000006_user_org_roles;
 mod m2024_000007_ocm_users;
 mod m2024_000008_ocm_contacts;
 mod m2024_000009_ocm_invite_tokens;
@@ -25,7 +25,7 @@ impl MigratorTrait for Migrator {
             Box::new(m2024_000003_permissions::Migration),
             Box::new(m2024_000004_organizations::Migration),
             Box::new(m2024_000005_role_permissions::Migration),
-            Box::new(m2024_000006_user_organization_roles::Migration),
+            Box::new(m2024_000006_user_org_roles::Migration),
             Box::new(m2024_000007_ocm_users::Migration),
             Box::new(m2024_000008_ocm_contacts::Migration),
             Box::new(m2024_000009_ocm_invite_tokens::Migration),
