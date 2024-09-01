@@ -1,0 +1,41 @@
+[package]
+name = "aver-database-entity"
+version = "0.1.0"
+
+rust-version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[lib]
+name = "aver_database_entity"
+path = "src/lib.rs"
+
+[dependencies]
+
+# Enable at least one `ASYNC_RUNTIME` and `DATABASE_DRIVER` feature if you want to run migration via CLI.
+# View the list of supported features at
+# https://www.sea-ql.org/SeaORM/docs/install-and-config/database-and-async-runtime.
+[dependencies.sea-orm]
+version = "1.0.1"
+features = [
+    "debug-print",
+    "runtime-tokio-rustls",
+    "sqlx-postgres",
+    "macros",
+]
+
+[dependencies.serde]
+version = "1.0.209"
+features = [
+    "derive",
+]
+
+[dependencies.uuid]
+version = "1.10.0"
+features = [
+    "v4",
+]
+
