@@ -3,30 +3,40 @@ level = "info"
 
 [server]
 domain = "localhost"
-scheme = "http"
+schema = "http"
 ip = "0.0.0.0"
 port = "3000"
 
-[ocm_provider]
+[database]
+schema = "postgres"
+host = "127.0.0.1"
+port = "5432"
+name = "aver"
+user = "aver"
+pass = "aver"
+
+[ocm]
+
+[ocm.provider]
 enable = true
 prefix = "ocm"
 endpoint = "http://localhost:3000"
 provider = "Aver (Reva but backwards)"
 
-[ocm_provider.capabilities]
+[ocm.provider.capabilities]
 mfa_capable = true
 notifications = true
 invite_accepted = true
 
-[[ocm_provider.resource_types]]
+[[ocm.provider.resource_types]]
 name = "file"
 
-[ocm_provider.resource_types.share_types]
+[ocm.provider.resource_types.share_types]
 user = true
 group = true
 federation = true
 
-[ocm_provider.resource_types.protocols]
+[ocm.provider.resource_types.protocols]
 webdav = "/dav"
 webapp = "/app"
 datatx = "/dav"
