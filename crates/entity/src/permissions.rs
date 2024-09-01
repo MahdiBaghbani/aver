@@ -18,8 +18,6 @@ pub struct Model {
     pub updated_at: DateTime,
     pub id: Uuid,
     pub name: String,
-    pub created_by: Uuid,
-    pub updated_by: Uuid,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
@@ -28,8 +26,6 @@ pub enum Column {
     UpdatedAt,
     Id,
     Name,
-    CreatedBy,
-    UpdatedBy,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DerivePrimaryKey)]
@@ -57,8 +53,6 @@ impl ColumnTrait for Column {
             Self::UpdatedAt => ColumnType::DateTime.def(),
             Self::Id => ColumnType::Uuid.def(),
             Self::Name => ColumnType::String(StringLen::None).def(),
-            Self::CreatedBy => ColumnType::Uuid.def(),
-            Self::UpdatedBy => ColumnType::Uuid.def(),
         }
     }
 }

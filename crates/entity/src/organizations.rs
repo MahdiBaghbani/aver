@@ -18,8 +18,6 @@ pub struct Model {
     pub updated_at: DateTime,
     pub id: Uuid,
     pub name: String,
-    pub created_by: Option<Uuid>,
-    pub updated_by: Option<Uuid>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
@@ -28,8 +26,6 @@ pub enum Column {
     UpdatedAt,
     Id,
     Name,
-    CreatedBy,
-    UpdatedBy,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DerivePrimaryKey)]
@@ -46,7 +42,7 @@ impl PrimaryKeyTrait for PrimaryKey {
 
 #[derive(Copy, Clone, Debug, EnumIter)]
 pub enum Relation {
-    UserOrganizationRoles,
+    UserOrgRoles,
 }
 
 impl ColumnTrait for Column {
@@ -57,8 +53,6 @@ impl ColumnTrait for Column {
             Self::UpdatedAt => ColumnType::DateTime.def(),
             Self::Id => ColumnType::Uuid.def(),
             Self::Name => ColumnType::String(StringLen::None).def(),
-            Self::CreatedBy => ColumnType::Uuid.def().null(),
-            Self::UpdatedBy => ColumnType::Uuid.def().null(),
         }
     }
 }
@@ -66,16 +60,14 @@ impl ColumnTrait for Column {
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
         match self {
-            Self::UserOrganizationRoles => {
-                Entity::has_many(super::user_organization_roles::Entity).into()
-            }
+            Self::UserOrgRoles => Entity::has_many(super::user_org_roles::Entity).into(),
         }
     }
 }
 
-impl Related<super::user_organization_roles::Entity> for Entity {
+impl Related<super::user_org_roles::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::UserOrganizationRoles.def()
+        Relation::UserOrgRoles.def()
     }
 }
 

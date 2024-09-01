@@ -21,8 +21,6 @@ pub struct Model {
     pub last_name: String,
     pub username: String,
     pub password: String,
-    pub created_by: Uuid,
-    pub updated_by: Uuid,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
@@ -34,8 +32,6 @@ pub enum Column {
     LastName,
     Username,
     Password,
-    CreatedBy,
-    UpdatedBy,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DerivePrimaryKey)]
@@ -52,7 +48,9 @@ impl PrimaryKeyTrait for PrimaryKey {
 
 #[derive(Copy, Clone, Debug, EnumIter)]
 pub enum Relation {
-    UserOrganizationRoles,
+    OcmContacts,
+    OcmInviteTokens,
+    UserOrgRoles,
 }
 
 impl ColumnTrait for Column {
@@ -66,8 +64,6 @@ impl ColumnTrait for Column {
             Self::LastName => ColumnType::String(StringLen::None).def(),
             Self::Username => ColumnType::String(StringLen::None).def().unique(),
             Self::Password => ColumnType::String(StringLen::None).def(),
-            Self::CreatedBy => ColumnType::Uuid.def(),
-            Self::UpdatedBy => ColumnType::Uuid.def(),
         }
     }
 }
@@ -75,16 +71,28 @@ impl ColumnTrait for Column {
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
         match self {
-            Self::UserOrganizationRoles => {
-                Entity::has_many(super::user_organization_roles::Entity).into()
-            }
+            Self::OcmContacts => Entity::has_many(super::ocm_contacts::Entity).into(),
+            Self::OcmInviteTokens => Entity::has_many(super::ocm_invite_tokens::Entity).into(),
+            Self::UserOrgRoles => Entity::has_many(super::user_org_roles::Entity).into(),
         }
     }
 }
 
-impl Related<super::user_organization_roles::Entity> for Entity {
+impl Related<super::ocm_contacts::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::UserOrganizationRoles.def()
+        Relation::OcmContacts.def()
+    }
+}
+
+impl Related<super::ocm_invite_tokens::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::OcmInviteTokens.def()
+    }
+}
+
+impl Related<super::user_org_roles::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::UserOrgRoles.def()
     }
 }
 

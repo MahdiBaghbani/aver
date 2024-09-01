@@ -8,7 +8,7 @@ pub struct Entity;
 
 impl EntityName for Entity {
     fn table_name(&self) -> &str {
-        "role_permissions"
+        "ocm_invite_tokens"
     }
 }
 
@@ -17,8 +17,9 @@ pub struct Model {
     pub created_at: DateTime,
     pub updated_at: DateTime,
     pub id: Uuid,
-    pub role_id: Uuid,
-    pub permission_id: Uuid,
+    pub user_id: Uuid,
+    pub token: String,
+    pub expiration_time: i64,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
@@ -26,8 +27,9 @@ pub enum Column {
     CreatedAt,
     UpdatedAt,
     Id,
-    RoleId,
-    PermissionId,
+    UserId,
+    Token,
+    ExpirationTime,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DerivePrimaryKey)]
@@ -44,8 +46,7 @@ impl PrimaryKeyTrait for PrimaryKey {
 
 #[derive(Copy, Clone, Debug, EnumIter)]
 pub enum Relation {
-    Permissions,
-    Roles,
+    Users,
 }
 
 impl ColumnTrait for Column {
@@ -55,8 +56,9 @@ impl ColumnTrait for Column {
             Self::CreatedAt => ColumnType::DateTime.def(),
             Self::UpdatedAt => ColumnType::DateTime.def(),
             Self::Id => ColumnType::Uuid.def(),
-            Self::RoleId => ColumnType::Uuid.def(),
-            Self::PermissionId => ColumnType::Uuid.def(),
+            Self::UserId => ColumnType::Uuid.def(),
+            Self::Token => ColumnType::String(StringLen::None).def(),
+            Self::ExpirationTime => ColumnType::BigInteger.def(),
         }
     }
 }
@@ -64,27 +66,17 @@ impl ColumnTrait for Column {
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
         match self {
-            Self::Permissions => Entity::belongs_to(super::permissions::Entity)
-                .from(Column::PermissionId)
-                .to(super::permissions::Column::Id)
-                .into(),
-            Self::Roles => Entity::belongs_to(super::roles::Entity)
-                .from(Column::RoleId)
-                .to(super::roles::Column::Id)
+            Self::Users => Entity::belongs_to(super::users::Entity)
+                .from(Column::UserId)
+                .to(super::users::Column::Id)
                 .into(),
         }
     }
 }
 
-impl Related<super::permissions::Entity> for Entity {
+impl Related<super::users::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Permissions.def()
-    }
-}
-
-impl Related<super::roles::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Roles.def()
+        Relation::Users.def()
     }
 }
 

@@ -2,9 +2,12 @@
 
 pub mod prelude;
 
+pub mod ocm_contacts;
+pub mod ocm_invite_tokens;
+pub mod ocm_users;
 pub mod organizations;
 pub mod permissions;
 pub mod role_permissions;
 pub mod roles;
-pub mod user_organization_roles;
+pub mod user_org_roles;
 pub mod users;

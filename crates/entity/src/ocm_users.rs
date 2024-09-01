@@ -8,7 +8,7 @@ pub struct Entity;
 
 impl EntityName for Entity {
     fn table_name(&self) -> &str {
-        "role_permissions"
+        "ocm_users"
     }
 }
 
@@ -17,8 +17,10 @@ pub struct Model {
     pub created_at: DateTime,
     pub updated_at: DateTime,
     pub id: Uuid,
-    pub role_id: Uuid,
-    pub permission_id: Uuid,
+    pub remote_id: String,
+    pub name: String,
+    pub email: String,
+    pub provider: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
@@ -26,8 +28,10 @@ pub enum Column {
     CreatedAt,
     UpdatedAt,
     Id,
-    RoleId,
-    PermissionId,
+    RemoteId,
+    Name,
+    Email,
+    Provider,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DerivePrimaryKey)]
@@ -44,8 +48,7 @@ impl PrimaryKeyTrait for PrimaryKey {
 
 #[derive(Copy, Clone, Debug, EnumIter)]
 pub enum Relation {
-    Permissions,
-    Roles,
+    OcmContacts,
 }
 
 impl ColumnTrait for Column {
@@ -55,8 +58,10 @@ impl ColumnTrait for Column {
             Self::CreatedAt => ColumnType::DateTime.def(),
             Self::UpdatedAt => ColumnType::DateTime.def(),
             Self::Id => ColumnType::Uuid.def(),
-            Self::RoleId => ColumnType::Uuid.def(),
-            Self::PermissionId => ColumnType::Uuid.def(),
+            Self::RemoteId => ColumnType::String(StringLen::None).def(),
+            Self::Name => ColumnType::String(StringLen::None).def(),
+            Self::Email => ColumnType::String(StringLen::None).def(),
+            Self::Provider => ColumnType::String(StringLen::None).def(),
         }
     }
 }
@@ -64,27 +69,14 @@ impl ColumnTrait for Column {
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
         match self {
-            Self::Permissions => Entity::belongs_to(super::permissions::Entity)
-                .from(Column::PermissionId)
-                .to(super::permissions::Column::Id)
-                .into(),
-            Self::Roles => Entity::belongs_to(super::roles::Entity)
-                .from(Column::RoleId)
-                .to(super::roles::Column::Id)
-                .into(),
+            Self::OcmContacts => Entity::has_many(super::ocm_contacts::Entity).into(),
         }
     }
 }
 
-impl Related<super::permissions::Entity> for Entity {
+impl Related<super::ocm_contacts::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Permissions.def()
-    }
-}
-
-impl Related<super::roles::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Roles.def()
+        Relation::OcmContacts.def()
     }
 }
 
