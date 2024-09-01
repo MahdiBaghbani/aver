@@ -3,21 +3,18 @@ use poem::http::StatusCode;
 use poem::web::{Data, Json};
 use poem::{handler, IntoResponse, Result};
 
-use aver_database::sea_orm::DatabaseConnection;
 use aver_database::users::mutation::Mutation;
 
-use super::models::CreateUserRequest;
+use super::models::CreateUserRequestData;
 use crate::models::ApplicationState;
 
 #[handler]
 pub async fn create(
     state: Data<&ApplicationState>,
-    Json(data): Json<CreateUserRequest>,
+    Json(data): Json<CreateUserRequestData>,
 ) -> Result<impl IntoResponse> {
-    let database: &DatabaseConnection = &state.database;
-
     Mutation::create_user(
-        database,
+        &state.database,
         data.first_name,
         data.last_name,
         data.username,

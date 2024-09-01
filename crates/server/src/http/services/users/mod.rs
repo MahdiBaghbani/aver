@@ -1,3 +1,3 @@
 pub mod endpoints;
 pub mod router;
-mod models;
+pub mod models;
