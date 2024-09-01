@@ -1,13 +1,15 @@
 use aver_database::sea_orm::DatabaseConnection;
 use mimalloc::MiMalloc;
 use poem::{listener::TcpListener, Server};
-use tracing::{debug, info};
+use tracing::{info, trace};
 use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*, EnvFilter};
 
 mod settings;
 mod http;
+mod models;
 
 use crate::http::application;
+use crate::models::ApplicationState;
 use crate::settings::settings;
 
 #[global_allocator]
@@ -29,16 +31,20 @@ async fn main() -> Result<(), std::io::Error> {
     tracing_subscriber::registry().with(filtered_layer).init();
 
     info!("⚙️ Settings have been loaded.");
-    debug!("{:#?}", settings());
-
+    trace!("{:#?}", settings());
 
     info!("⚙️ Initialize Database.");
-    let db_connection: DatabaseConnection = aver_common::database::setup_database(
+    let database: DatabaseConnection = aver_common::database::setup_database(
         settings().database.get_uri()
     ).await;
+
+    let state: ApplicationState = ApplicationState {
+        database
+    };
 
     let tcp_bind: String = settings().server.get_tcp_bind();
     let tcp_listener: TcpListener<String> = TcpListener::bind(tcp_bind);
 
-    Server::new(tcp_listener).run(application()).await
+    info!("⚙️ Starting Server.");
+    Server::new(tcp_listener).run(application(state)).await
 }
