@@ -16,6 +16,7 @@ impl EntityName for Entity {
 pub struct Model {
     pub created_at: DateTime,
     pub updated_at: DateTime,
+    #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
     pub first_name: String,
     pub last_name: String,
