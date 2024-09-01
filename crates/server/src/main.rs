@@ -1,3 +1,4 @@
+use aver_database::sea_orm::DatabaseConnection;
 use mimalloc::MiMalloc;
 use poem::{listener::TcpListener, Server};
 use tracing::{debug, info};
@@ -5,7 +6,6 @@ use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*, EnvFilter};
 
 mod settings;
 mod http;
-mod database;
 
 use crate::http::application;
 use crate::settings::settings;
@@ -31,9 +31,11 @@ async fn main() -> Result<(), std::io::Error> {
     info!("⚙️ Settings have been loaded.");
     debug!("{:#?}", settings());
 
-    database::init();
 
-    info!("⚙️ Database have been initialized.");
+    info!("⚙️ Initialize Database.");
+    let db_connection: DatabaseConnection = aver_common::database::setup_database(
+        settings().database.get_uri()
+    ).await;
 
     let tcp_bind: String = settings().server.get_tcp_bind();
     let tcp_listener: TcpListener<String> = TcpListener::bind(tcp_bind);

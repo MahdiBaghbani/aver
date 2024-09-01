@@ -26,6 +26,9 @@ tracing = "0.1.40"
 [dependencies.aver-common]
 path = "../common"
 
+[dependencies.aver-database]
+path = "../database"
+
 [dependencies.config]
 version = "0.14.0"
 features = [
