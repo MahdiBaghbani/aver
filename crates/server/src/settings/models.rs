@@ -16,7 +16,7 @@ pub struct Log {
 #[derive(Debug, Deserialize)]
 pub struct Server {
     pub domain: String,
-    pub scheme: String,
+    pub schema: String,
     pub ip: String,
     pub port: String,
     pub mode: ServerMode,
@@ -30,12 +30,12 @@ pub enum ServerMode {
 
 #[derive(Debug, Deserialize)]
 pub struct Database {
-    pub redb: Redb,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Redb {
-    pub path: String,
+    pub schema: String,
+    pub host: String,
+    pub port: String,
+    pub name: String,
+    pub user: String,
+    pub pass: String,
 }
 
 #[derive(Debug, Deserialize)]

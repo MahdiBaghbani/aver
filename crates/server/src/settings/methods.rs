@@ -25,7 +25,7 @@ impl Settings {
 
 impl Server {
     pub fn get_url(&self) -> String {
-        format!("{}://{}:{}", self.scheme, self.domain, self.port)
+        format!("{}://{}:{}", self.schema, self.domain, self.port)
     }
     pub fn get_tcp_bind(&self) -> String {
         format!("{}:{}", self.ip, self.port)
@@ -33,8 +33,16 @@ impl Server {
 }
 
 impl Database {
-    pub fn get_db_file_path(&self) -> String {
-        self.redb.path.clone()
+    pub fn get_uri(&self) -> String {
+        format!(
+            "{}://{}:{}@{}:{}/{}",
+            self.schema,
+            self.user,
+            self.pass,
+            self.host,
+            self.port,
+            self.name
+        )
     }
 }
 
