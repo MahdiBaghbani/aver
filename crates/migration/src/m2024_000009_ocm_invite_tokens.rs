@@ -9,7 +9,7 @@ impl MigrationTrait for Migration {
         let table: TableCreateStatement = table_auto(OcmInviteTokens::Table)
             .col(uuid(OcmInviteTokens::Id).unique_key().primary_key())
             .col(uuid(OcmInviteTokens::UserId))
-            .col(string(OcmInviteTokens::Token))
+            .col(string_uniq(OcmInviteTokens::Token))
             .col(big_integer(OcmInviteTokens::ExpirationTime))
             .foreign_key(
                 ForeignKey::create()
