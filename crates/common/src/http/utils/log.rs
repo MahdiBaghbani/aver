@@ -72,6 +72,8 @@ pub fn get_client_ip(req: &Request) -> Option<String> {
     let client_ip = match req.remote_addr().0 {
         Addr::SocketAddr(addr) => Some(addr.ip().to_string()),
         Addr::Custom(..) => Some("127.0.0.1".to_string()),
+        #[cfg(unix)]
+        Addr::Unix(..) => Some("127.0.0.1".to_string()),
     };
 
     client_ip
