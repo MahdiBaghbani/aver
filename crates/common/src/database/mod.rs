@@ -11,8 +11,7 @@ pub async fn setup_database(uri: String) -> DatabaseConnection {
     debug!("⚙️ Performing database connection.");
     let connection: DatabaseConnection = Database::connect(options).await.unwrap();
     debug!("⚙️ Database connection established.");
-
-    debug!("⚙️ Applying all pending database migrations");
+    
     Migrator::up(&connection, None).await.unwrap();
     info!("⚙️ Database Initialization is complete.");
 
