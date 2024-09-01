@@ -16,6 +16,7 @@ impl EntityName for Entity {
 pub struct Model {
     pub created_at: DateTime,
     pub updated_at: DateTime,
+    #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
     pub user_id: Uuid,
     pub token: String,
@@ -57,7 +58,7 @@ impl ColumnTrait for Column {
             Self::UpdatedAt => ColumnType::DateTime.def(),
             Self::Id => ColumnType::Uuid.def(),
             Self::UserId => ColumnType::Uuid.def(),
-            Self::Token => ColumnType::String(StringLen::None).def(),
+            Self::Token => ColumnType::String(StringLen::None).def().unique(),
             Self::ExpirationTime => ColumnType::BigInteger.def(),
         }
     }
