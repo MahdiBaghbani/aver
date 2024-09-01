@@ -10,7 +10,7 @@ pub struct JwtMiddlewareImpl<E> {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct Claims {
+pub struct Claims {
     pub username: String,
     pub permissions: Vec<String>,
     pub exp: i64,
