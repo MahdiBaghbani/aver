@@ -1,26 +1,34 @@
 use poem::middleware::{CatchPanic, NormalizePath, TrailingSlash};
+use poem::session::{CookieConfig, RedisStorage, ServerSession};
 use poem::{get, post, Endpoint, EndpointExt, Route};
+use redis::aio::ConnectionManager;
+use redis::Client;
 
 use aver_common::http::utils::health::health;
 use aver_common::http::utils::log::log;
 use aver_common::http::utils::panic::PanicHandler;
 
+use super::models::ApplicationState;
+use super::settings::settings;
+
 pub mod services;
 pub mod middlewares;
 
-use crate::http::middlewares::auth::endpoints::create_token;
-use crate::http::services::ocm::endpoints::legacy_discovery;
-use crate::http::services::ocm::router::ocm;
-use crate::http::services::users::router::users;
-use crate::http::services::wellknown::router::wellknown;
-use crate::models::ApplicationState;
-use crate::settings::settings;
+use self::middlewares::auth::endpoints::create_token;
+use self::services::ocm::endpoints::legacy_discovery;
+use self::services::ocm::router::ocm;
+use self::services::users::router::users;
+use self::services::wellknown::router::wellknown;
 
-pub fn application(state: ApplicationState) -> impl Endpoint {
+pub async fn application(state: ApplicationState) -> impl Endpoint {
+    let session: ServerSession<RedisStorage<ConnectionManager>> = session().await;
+    let catch_panic: CatchPanic<PanicHandler> = CatchPanic::new().with_handler(PanicHandler::new());
+
     Route::new()
         .nest("/", services())
         .with(NormalizePath::new(TrailingSlash::Trim))
-        .with(CatchPanic::new().with_handler(PanicHandler::new()))
+        .with(session)
+        .with(catch_panic)
         .data(state)
         .around(log)
         .boxed()
@@ -39,4 +47,14 @@ fn root() -> impl Endpoint {
         .at("/ocm-provider", get(legacy_discovery))
         .at("/health", get(health))
         .at("/token", post(create_token))
+}
+
+pub async fn session() -> ServerSession<RedisStorage<ConnectionManager>> {
+    let client: Client = Client::open(settings().session.get_uri()).unwrap();
+    let connection: ConnectionManager = ConnectionManager::new(client).await.unwrap();
+
+    ServerSession::new(
+        CookieConfig::default(),
+        RedisStorage::new(connection),
+    )
 }

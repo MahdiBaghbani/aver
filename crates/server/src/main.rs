@@ -46,5 +46,5 @@ async fn main() -> Result<(), std::io::Error> {
     let tcp_listener: TcpListener<String> = TcpListener::bind(tcp_bind);
 
     info!("⚙️ Starting Server.");
-    Server::new(tcp_listener).run(application(state)).await
+    Server::new(tcp_listener).run(application(state).await).await
 }
