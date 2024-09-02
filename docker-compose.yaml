@@ -9,3 +9,10 @@ services:
       POSTGRES_USER: "aver"
     ports:
       - "5432:5432"
+
+  redis:
+    image: "redis:7.4.0-alpine3.20"
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "6379:6379"
