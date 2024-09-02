@@ -5,6 +5,7 @@ pub struct Settings {
     pub log: Log,
     pub server: Server,
     pub database: Database,
+    pub session: Session,
     pub ocm: Ocm,
 }
 
@@ -36,6 +37,13 @@ pub struct Database {
     pub name: String,
     pub user: String,
     pub pass: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Session {
+    pub schema: String,
+    pub host: String,
+    pub port: String,
 }
 
 #[derive(Debug, Deserialize)]

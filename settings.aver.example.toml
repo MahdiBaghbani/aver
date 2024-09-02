@@ -15,6 +15,11 @@ name = "aver"
 user = "aver"
 pass = "aver"
 
+[session]
+schema = "redis"
+host = "127.0.0.1"
+port = "6379"
+
 [ocm]
 
 [ocm.provider]

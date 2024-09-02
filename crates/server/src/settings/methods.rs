@@ -5,7 +5,7 @@ use crate::http::services::ocm::models::{
     DiscoveryProtocols,
     DiscoveryResourceTypes,
 };
-use crate::settings::models::{Database, Ocm, OcmProvider, OcmProviderCapabilities, OcmProviderProtocols, OcmProviderResourceTypes, OcmProviderShareTypes, Server, Settings};
+use crate::settings::models::{Database, Ocm, OcmProvider, OcmProviderCapabilities, OcmProviderProtocols, OcmProviderResourceTypes, OcmProviderShareTypes, Server, Session, Settings};
 
 impl Settings {
     pub fn new() -> Result<Self, ConfigError> {
@@ -42,6 +42,17 @@ impl Database {
             self.host,
             self.port,
             self.name
+        )
+    }
+}
+
+impl Session {
+    pub fn get_uri(&self) -> String {
+        format!(
+            "{}://{}:{}/",
+            self.schema,
+            self.host,
+            self.port,
         )
     }
 }
