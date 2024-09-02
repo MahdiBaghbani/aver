@@ -1,11 +1,13 @@
-use crate::http::services::auth::models::LoginRequestData;
-use crate::templates::TEMPLATES;
 use poem::error::InternalServerError;
 use poem::http::{header, StatusCode};
 use poem::session::Session;
 use poem::web::{Form, Html};
 use poem::{handler, IntoResponse, Response};
 use tera::Context;
+
+use crate::templates::TEMPLATES;
+
+use super::models::LoginRequestData;
 
 #[handler]
 pub async fn login_ui() -> impl IntoResponse {
@@ -19,9 +21,12 @@ pub async fn login_ui() -> impl IntoResponse {
 }
 
 #[handler]
-pub async fn login_form(Form(params): Form<LoginRequestData>, session: &Session) -> impl IntoResponse {
-    if params.username == "test" && params.password == "123456" {
-        session.set("username", params.username);
+pub async fn login_form(
+    session: &Session,
+    Form(request): Form<LoginRequestData>,
+) -> impl IntoResponse {
+    if request.username == "test" && request.password == "123456" {
+        session.set("username", request.username);
         Response::builder()
             .status(StatusCode::FOUND)
             .header(header::LOCATION, "/")
@@ -40,4 +45,13 @@ pub async fn login_form(Form(params): Form<LoginRequestData>, session: &Session)
         )
             .into_response()
     }
+}
+
+#[handler]
+pub async fn logout(session: &Session) -> impl IntoResponse {
+    session.purge();
+    Response::builder()
+        .status(StatusCode::FOUND)
+        .header(header::LOCATION, "/")
+        .finish()
 }
