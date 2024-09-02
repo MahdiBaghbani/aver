@@ -18,6 +18,11 @@ use self::services::root::router::root;
 use self::services::users::router::users;
 use self::services::wellknown::router::wellknown;
 
+pub enum EndpointType {
+    Api,
+    Ssr,
+}
+
 pub async fn application(state: ApplicationState) -> impl Endpoint {
     let session: ServerSession<RedisStorage<ConnectionManager>> = session().await;
     let catch_panic: CatchPanic<PanicHandler> = CatchPanic::new().with_handler(PanicHandler::new());
@@ -36,11 +41,17 @@ fn services() -> impl Endpoint {
     Route::new()
         .nest("/", root())
         .nest("/.well-known", wellknown())
-        .nest("/auth", auth())
+        .nest("/api", api())
+        .nest("/auth", auth(EndpointType::Ssr))
         .nest(settings().ocm.provider.get_prefix(), ocm())
-        .nest("/users", users())
+        .nest("/users", users(EndpointType::Ssr))
 }
 
+fn api() -> impl Endpoint {
+    Route::new()
+        .nest("/auth", auth(EndpointType::Api))
+        .nest("/users", users(EndpointType::Api))
+}
 
 pub async fn session() -> ServerSession<RedisStorage<ConnectionManager>> {
     let client: Client = Client::open(settings().session.get_uri()).unwrap();

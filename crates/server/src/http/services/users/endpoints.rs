@@ -7,19 +7,20 @@ use argon2::{
 };
 use poem::error::InternalServerError;
 use poem::http::StatusCode;
-use poem::web::{Data, Form, Html};
+use poem::web::{Data, Form, Html, Json};
 use poem::{handler, IntoResponse, Result};
 use tera::Context;
 
 use aver_database::users::mutation::Mutation;
+use aver_database_entity::users;
 
 use crate::models::ApplicationState;
 use crate::templates::TEMPLATES;
 
-use super::models::CreateUserRequestData;
+use super::models::{RegisterUserRequestData, RegisterUserResponseData};
 
 #[handler]
-pub async fn create_ui() -> impl IntoResponse {
+pub async fn register_ui() -> impl IntoResponse {
     let context: Context = Context::new();
     TEMPLATES
         .render("signup.html", &context)
@@ -30,23 +31,51 @@ pub async fn create_ui() -> impl IntoResponse {
 }
 
 #[handler]
-pub async fn create(
+pub async fn register_with_form(
     state: Data<&ApplicationState>,
-    Form(request): Form<CreateUserRequestData>,
+    Form(request): Form<RegisterUserRequestData>,
+) -> Result<impl IntoResponse> {
+    register(state, request).await
+}
+
+#[handler]
+pub async fn register_with_json(
+    state: Data<&ApplicationState>,
+    Json(request): Json<RegisterUserRequestData>,
+) -> Result<impl IntoResponse> {
+    register(state, request).await
+}
+
+pub async fn register(
+    state: Data<&ApplicationState>,
+    data: RegisterUserRequestData,
 ) -> Result<impl IntoResponse> {
     let argon2: Argon2 = Argon2::default();
     let salt: SaltString = SaltString::generate(&mut OsRng);
-    let password_hash: String = argon2.hash_password(request.password.as_ref(), &salt)
-        .unwrap()
-        .to_string();
+    let password_hash: String = argon2.hash_password(
+        data.password.as_ref(),
+        &salt,
+    ).unwrap().to_string();
 
-    Mutation::create_user(
+    let user: users::Model = Mutation::create_user(
         &state.database,
-        request.firstname,
-        request.lastname,
-        request.username,
+        data.firstname,
+        data.lastname,
+        data.username,
         password_hash,
     ).await.map_err(InternalServerError)?;
 
-    Ok(StatusCode::CREATED)
+    Ok(
+        (
+            StatusCode::CREATED,
+            Json(
+                RegisterUserResponseData {
+                    id: user.id,
+                    firstname: user.first_name,
+                    lastname: user.last_name,
+                    username: user.username,
+                }
+            )
+        )
+    )
 }
