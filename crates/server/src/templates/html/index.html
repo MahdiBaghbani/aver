@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Aver</title></head>
+<body>
+{% if is_authenticated %}
+<div>hello {{ username }}, you are viewing a restricted resource</div>
+<a href="/auth/logout">click here to logout</a>
+{% else %}
+<a href="/auth/login">click here to login</a>
+<br>
+<a href="/users/create">click here to create a user</a>
+{% endif %}
+
+</body>
+</html>
