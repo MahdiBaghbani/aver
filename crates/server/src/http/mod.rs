@@ -1,22 +1,20 @@
 use poem::middleware::{CatchPanic, NormalizePath, TrailingSlash};
 use poem::session::{CookieConfig, RedisStorage, ServerSession};
-use poem::{get, post, Endpoint, EndpointExt, Route};
+use poem::{Endpoint, EndpointExt, Route};
 use redis::aio::ConnectionManager;
 use redis::Client;
 
-use aver_common::http::utils::health::health;
-use aver_common::http::utils::log::log;
-use aver_common::http::utils::panic::PanicHandler;
-
 use super::models::ApplicationState;
 use super::settings::settings;
+use super::utils::log::log;
+use super::utils::panic::PanicHandler;
 
 pub mod services;
 pub mod middlewares;
 
-use self::middlewares::auth::endpoints::create_token;
-use self::services::ocm::endpoints::legacy_discovery;
+use self::services::auth::router::auth;
 use self::services::ocm::router::ocm;
+use self::services::root::router::root;
 use self::services::users::router::users;
 use self::services::wellknown::router::wellknown;
 
@@ -38,16 +36,11 @@ fn services() -> impl Endpoint {
     Route::new()
         .nest("/", root())
         .nest("/.well-known", wellknown())
+        .nest("/auth", auth())
         .nest(settings().ocm.provider.get_prefix(), ocm())
         .nest("/users", users())
 }
 
-fn root() -> impl Endpoint {
-    Route::new()
-        .at("/ocm-provider", get(legacy_discovery))
-        .at("/health", get(health))
-        .at("/token", post(create_token))
-}
 
 pub async fn session() -> ServerSession<RedisStorage<ConnectionManager>> {
     let client: Client = Client::open(settings().session.get_uri()).unwrap();

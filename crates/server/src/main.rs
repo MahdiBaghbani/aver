@@ -7,10 +7,14 @@ use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*, EnvFilter};
 mod settings;
 mod http;
 mod models;
+mod utils;
+mod database;
+mod templates;
 
-use crate::http::application;
-use crate::models::ApplicationState;
-use crate::settings::settings;
+use self::database::setup_database;
+use self::http::application;
+use self::models::ApplicationState;
+use self::settings::settings;
 
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
@@ -34,7 +38,7 @@ async fn main() -> Result<(), std::io::Error> {
     trace!("{:#?}", settings());
 
     info!("⚙️ Initialize Database.");
-    let database: DatabaseConnection = aver_common::database::setup_database(
+    let database: DatabaseConnection = setup_database(
         settings().database.get_uri()
     ).await;
 

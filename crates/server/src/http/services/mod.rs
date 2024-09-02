@@ -1,3 +1,5 @@
+pub mod auth;
 pub mod ocm;
-pub mod wellknown;
+pub mod root;
 pub mod users;
+pub mod wellknown;
