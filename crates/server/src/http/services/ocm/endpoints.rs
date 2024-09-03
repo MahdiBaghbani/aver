@@ -1,3 +1,4 @@
+use chrono::{Duration, Utc};
 use poem::error::InternalServerError;
 use poem::http::header::CONTENT_TYPE;
 use poem::http::HeaderMap;
@@ -62,6 +63,7 @@ pub async fn create_invite_token(
         &state.database,
         user_id,
         token,
+        (Utc::now() + Duration::try_minutes(1).unwrap()).timestamp(),
     ).await.map_err(InternalServerError)?;
 
     Ok(StatusCode::CREATED)

@@ -10,12 +10,13 @@ impl Mutation {
         database: &DbConn,
         user_id: Uuid,
         token: String,
+        expiration_time: i64
     ) -> Result<ocm_invite_tokens::Model, DbErr> {
         ocm_invite_tokens::ActiveModel {
             id: Set(Uuid::new_v4()),
             user_id: Set(user_id),
             token: Set(token),
-            expiration_time: Set(1), // TODO @MahdiBaghbani: implement later.
+            expiration_time: Set(expiration_time),
             ..Default::default()
         }
             .insert(database)
