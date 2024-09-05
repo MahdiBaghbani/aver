@@ -1,13 +1,18 @@
+use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use poem::error::InternalServerError;
 use poem::http::{header, StatusCode};
 use poem::session::Session;
-use poem::web::{Form, Html};
-use poem::{handler, IntoResponse, Response};
+use poem::web::{Data, Form, Html, Json};
+use poem::{handler, IntoResponse, Response, Result};
 use tera::Context;
 
+use aver_database::users::query::Query;
+use aver_database_entity::users;
+
+use crate::models::ApplicationState;
 use crate::templates::TEMPLATES;
 
-use super::models::LoginRequestData;
+use super::models::{LoginMode, LoginRequestData};
 
 #[handler]
 pub async fn login_ui() -> impl IntoResponse {
@@ -21,30 +26,84 @@ pub async fn login_ui() -> impl IntoResponse {
 }
 
 #[handler]
-pub async fn login_form(
+pub async fn login_with_form(
+    state: Data<&ApplicationState>,
     session: &Session,
     Form(request): Form<LoginRequestData>,
-) -> impl IntoResponse {
-    if request.username == "test" && request.password == "123456" {
-        session.set("username", request.username);
-        Response::builder()
-            .status(StatusCode::FOUND)
-            .header(header::LOCATION, "/")
-            .finish()
-    } else {
-        Html(
-            r#"
-    <!DOCTYPE html>
-    <html>
-    <head><meta charset="UTF-8"><title>Example Session Auth</title></head>
-    <body>
-    no such user
-    </body>
-    </html>
-    "#,
-        )
-            .into_response()
+) -> Result<impl IntoResponse> {
+    login(&state, session, &request, LoginMode::Cookie).await
+}
+
+#[handler]
+pub async fn login_with_json(
+    state: Data<&ApplicationState>,
+    session: &Session,
+    Json(request): Json<LoginRequestData>,
+) -> Result<impl IntoResponse> {
+    login(&state, session, &request, LoginMode::Token).await
+}
+
+
+pub async fn login(
+    state: &Data<&ApplicationState>,
+    session: &Session,
+    request: &LoginRequestData,
+    mode: LoginMode,
+) -> Result<impl IntoResponse> {
+    if request.username.is_empty() | request.password.is_empty() {
+        return Ok(
+            Response::builder()
+                .status(StatusCode::UNAUTHORIZED)
+                .finish()
+        );
     }
+
+    let result: Option<users::Model> = Query::find_user_by_username(
+        &state.database,
+        &request.username,
+    ).await.map_err(InternalServerError)?;
+
+    let response: Response = match result {
+        Some(user) => {
+            let result = PasswordHash::new(&user.password);
+            match result {
+                Ok(parsed_hash) => {
+                    let valid_password: bool = Argon2::default().verify_password(
+                        request.password.as_ref(),
+                        &parsed_hash,
+                    ).is_ok();
+                    if valid_password {
+                        match mode {
+                            LoginMode::Cookie => {
+                                session.set("username", &request.username);
+                            }
+                            LoginMode::Token => {}
+                        }
+
+                        Response::builder()
+                            .status(StatusCode::OK)
+                            .finish()
+                    } else {
+                        Response::builder()
+                            .status(StatusCode::UNAUTHORIZED)
+                            .finish()
+                    }
+                }
+                Err(_) => {
+                    Response::builder()
+                        .status(StatusCode::INTERNAL_SERVER_ERROR)
+                        .finish()
+                }
+            }
+        }
+        None => {
+            Response::builder()
+                .status(StatusCode::UNAUTHORIZED)
+                .finish()
+        }
+    };
+
+    Ok(response)
 }
 
 #[handler]
