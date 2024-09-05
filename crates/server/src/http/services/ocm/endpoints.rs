@@ -2,27 +2,36 @@ use chrono::{Duration, Utc};
 use poem::error::InternalServerError;
 use poem::http::header::CONTENT_TYPE;
 use poem::http::HeaderMap;
-use poem::web::Data;
+use poem::session::Session;
+use poem::web::{Data, Html};
 use poem::{
     handler,
     http::StatusCode,
     web::Json,
     web::Redirect,
     IntoResponse,
+    Response,
     Result,
 };
+use tera::Context;
 use uuid::Uuid;
 
 use aver_database::ocm::mutation::Mutation;
+use aver_database::users::query::Query;
+use aver_database_entity::ocm_invite_tokens;
+use aver_database_entity::users;
 
-use crate::http::services::ocm::models::{
-    CreateInviteTokenRequestData,
+use crate::http::EndpointMode;
+use crate::models::ApplicationState;
+use crate::settings::settings;
+use crate::templates::TEMPLATES;
+
+use super::models::{
+    CreateInviteTokenResponseData,
     DiscoveryData,
     InviteAcceptedRequestData,
     InviteAcceptedResponseData,
 };
-use crate::models::ApplicationState;
-use crate::settings::settings;
 
 #[handler]
 pub async fn discovery() -> impl IntoResponse {
@@ -52,21 +61,101 @@ pub async fn mfa_capable() -> impl IntoResponse {
 }
 
 #[handler]
-pub async fn create_invite_token(
+pub async fn create_invite_token_ui() -> impl IntoResponse {
+    let mut context: Context = Context::new();
+    context.insert("token", "");
+    TEMPLATES
+        .render("create-invite-token.html", &context)
+        .map_err(InternalServerError)
+        .map(Html)
+        .unwrap()
+        .into_response()
+}
+
+#[handler]
+pub async fn create_invite_token_return_html(
     state: Data<&ApplicationState>,
-    Json(data): Json<CreateInviteTokenRequestData>,
+    session: &Session,
 ) -> Result<impl IntoResponse> {
-    let token: String = Uuid::new_v4().to_string();
-    let user_id: Uuid = Uuid::parse_str(&data.user_id).map_err(InternalServerError)?;
+    create_invite_token(&state, session, EndpointMode::Ssr).await
+}
 
-    Mutation::create_token(
-        &state.database,
-        user_id,
-        token,
-        (Utc::now() + Duration::try_minutes(1).unwrap()).timestamp(),
-    ).await.map_err(InternalServerError)?;
+#[handler]
+pub async fn create_invite_token_return_json(
+    state: Data<&ApplicationState>,
+    session: &Session,
+) -> Result<impl IntoResponse> {
+    create_invite_token(&state, session, EndpointMode::Api).await
+}
 
-    Ok(StatusCode::CREATED)
+
+pub async fn create_invite_token(
+    state: &Data<&ApplicationState>,
+    session: &Session,
+    mode: EndpointMode,
+) -> Result<impl IntoResponse> {
+    let response: Response = match session.get::<String>("username") {
+        Some(username) => {
+            let result: Option<users::Model> = Query::find_user_by_username(
+                &state.database,
+                &username,
+            ).await.map_err(InternalServerError)?;
+
+            match result {
+                Some(user) => {
+                    let token: String = Uuid::new_v4().to_string();
+
+                    let expiration_time: i64 = (
+                        Utc::now() + Duration::try_minutes(1).unwrap()
+                    ).timestamp();
+
+                    let model: ocm_invite_tokens::Model = Mutation::create_token(
+                        &state.database,
+                        user.id,
+                        token,
+                        expiration_time,
+                    ).await.map_err(InternalServerError)?;
+
+                    match mode {
+                        EndpointMode::Api => {
+                            let token = CreateInviteTokenResponseData {
+                                token: model.token,
+                                expiration_time: model.expiration_time,
+                            };
+
+                            let body: Vec<u8> = serde_json::to_vec(&token).map_err(InternalServerError)?;
+
+                            Response::builder()
+                                .status(StatusCode::OK)
+                                .header(CONTENT_TYPE, "application/json; charset=utf-8")
+                                .body(body)
+                        }
+                        EndpointMode::Ssr => {
+                            let mut context: Context = Context::new();
+                            context.insert("token", &model.token);
+                            TEMPLATES
+                                .render("create-invite-token.html", &context)
+                                .map_err(InternalServerError)
+                                .map(Html)?
+                                .into_response()
+                        }
+                    }
+                }
+                None => {
+                    Response::builder()
+                        .status(StatusCode::UNAUTHORIZED)
+                        .finish()
+                }
+            }
+        }
+        None => {
+            Response::builder()
+                .status(StatusCode::UNAUTHORIZED)
+                .finish()
+        }
+    };
+
+    Ok(response)
 }
 
 #[handler]

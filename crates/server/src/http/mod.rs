@@ -18,7 +18,7 @@ use self::services::root::router::root;
 use self::services::users::router::users;
 use self::services::wellknown::router::wellknown;
 
-pub enum EndpointType {
+pub enum EndpointMode {
     Api,
     Ssr,
 }
@@ -42,15 +42,16 @@ fn services() -> impl Endpoint {
         .nest("/", root())
         .nest("/.well-known", wellknown())
         .nest("/api", api())
-        .nest("/auth", auth(EndpointType::Ssr))
-        .nest(settings().ocm.provider.get_prefix(), ocm())
-        .nest("/users", users(EndpointType::Ssr))
+        .nest("/auth", auth(EndpointMode::Ssr))
+        .nest(settings().ocm.provider.get_prefix(), ocm(EndpointMode::Ssr))
+        .nest("/users", users(EndpointMode::Ssr))
 }
 
 fn api() -> impl Endpoint {
     Route::new()
-        .nest("/auth", auth(EndpointType::Api))
-        .nest("/users", users(EndpointType::Api))
+        .nest("/auth", auth(EndpointMode::Api))
+        .nest(settings().ocm.provider.get_prefix(), ocm(EndpointMode::Api))
+        .nest("/users", users(EndpointMode::Api))
 }
 
 pub async fn session() -> ServerSession<RedisStorage<ConnectionManager>> {
