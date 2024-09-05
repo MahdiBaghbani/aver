@@ -110,8 +110,9 @@ pub struct ShareProtocolDatatx {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-pub struct CreateInviteTokenRequestData {
-    pub user_id: String,
+pub struct CreateInviteTokenResponseData {
+    pub token: String,
+    pub expiration_time: i64,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
