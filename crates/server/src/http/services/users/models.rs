@@ -10,10 +10,9 @@ pub struct RegisterUserRequestData {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct RegisterUserResponseData {
+pub struct UserInfoResponseData {
     pub id: Uuid,
     pub firstname: String,
     pub lastname: String,
     pub username: String,
 }
-
