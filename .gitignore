@@ -21,7 +21,6 @@ gen
 .settings.aver.toml
 .settings.gnap.toml
 
-./crates/webui/dist/
-
 # Javascript deps
 */**/node_modules
+/crates/webui/dist/
