@@ -1,7 +1,7 @@
 use yew::prelude::*;
 
 #[function_component(NavbarUserMenu)]
-pub fn user_component() -> Html {
+pub fn user_menu_component() -> Html {
     html! {
         <div
             id="user-menu-button"
@@ -12,7 +12,8 @@ pub fn user_component() -> Html {
                 <div class="w-10 h-10 rounded-full">
                     <img
                         alt="user profile picture"
-                        src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                        src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                    />
                 </div>
             </div>
             <div
