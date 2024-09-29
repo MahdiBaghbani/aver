@@ -40,7 +40,7 @@ pub async fn login_with_json(
     session: &Session,
     Json(request): Json<LoginRequestData>,
 ) -> Result<impl IntoResponse> {
-    login(&state, session, &request, LoginMode::Token).await
+    login(&state, session, &request, LoginMode::Cookie).await
 }
 
 
