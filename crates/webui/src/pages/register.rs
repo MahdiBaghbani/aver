@@ -11,6 +11,7 @@ use yew_router::prelude::*;
 use yewdux::prelude::*;
 
 use crate::api::user_api::api_register_user;
+use crate::components::footer::Footer;
 use crate::components::{form_input::FormInput, submit_button::SubmitButton};
 use crate::router::Route;
 use crate::store::{set_page_loading, set_show_alert, Store};
@@ -55,7 +56,7 @@ fn get_input_callback(
 #[function_component(RegisterPage)]
 pub fn register_page() -> Html {
     let (store, dispatch) = use_store::<Store>();
-    let form: UseStateHandle<RegisterUserSchema> = use_state(|| RegisterUserSchema::default());
+    let form: UseStateHandle<RegisterUserSchema> = use_state(RegisterUserSchema::default);
     let validation_errors: UseStateHandle<Rc<RefCell<ValidationErrors>>> = use_state(
         || Rc::new(
             RefCell::new(
@@ -204,42 +205,44 @@ pub fn register_page() -> Html {
     };
 
     html! {
-    <section class="py-8 bg-ct-blue-600 min-h-screen grid place-items-center">
-      <div class="w-full">
-        <h1 class="text-4xl xl:text-6xl text-center font-[600] text-ct-yellow-600 mb-4">
-         {" Welcome to CodevoWeb!"}
-        </h1>
-        <h2 class="text-lg text-center mb-4 text-ct-dark-200">
-          {"Sign Up To Get Started!"}
-        </h2>
-          <form
-            onsubmit={on_submit}
-            class="max-w-md w-full mx-auto overflow-hidden shadow-lg bg-ct-dark-200 rounded-2xl p-8 space-y-5"
-          >
-            <FormInput label="Firstname" name="firstname" input_ref={firstname_input_ref} handle_onchange={handle_firstname_input}  errors={&*validation_errors} handle_on_input_blur={validate_input_on_blur.clone()} />
-            <FormInput label="Lastname" name="lastname" input_ref={lastname_input_ref} handle_onchange={handle_lastname_input}  errors={&*validation_errors} handle_on_input_blur={validate_input_on_blur.clone()} />
-            <FormInput label="Username" name="username" input_type="username" input_ref={username_input_ref} handle_onchange={handle_username_input}  errors={&*validation_errors} handle_on_input_blur={validate_input_on_blur.clone()} />
-            <FormInput label="Password" name="password" input_type="password" input_ref={password_input_ref} handle_onchange={handle_password_input}  errors={&*validation_errors} handle_on_input_blur={validate_input_on_blur.clone()} />
-            <FormInput
-              label="Confirm Password"
-              name="password_confirm"
-              input_type="password"
-              input_ref={password_confirm_input_ref}
-              handle_onchange={handle_password_confirm_input}
-              errors={&*validation_errors}
-              handle_on_input_blur={validate_input_on_blur.clone()}
-            />
-            <span class="block">
-              {"Already have an account?"} {" "}
-            <Link<Route> to={Route::Login} classes="text-ct-blue-600">{"Login Here"}</Link<Route>>
-            </span>
-            <SubmitButton
-              loading={store.page_loading}
-            >
-             {" Sign Up"}
-            </SubmitButton>
-          </form>
-      </div>
-    </section>
+        <>
+            <section class="hero bg-base-300 flex-grow">
+                <div class="w-[22rem] flex flex-col items-center justify-center mx-auto lg:py-0">
+                    <div class="flex items-center mb-6">
+                        <img class="w-28 h-28 mr-2" src="/assets/images/logos/aver.svg" alt="logo"/>
+                    </div>
+                    <div class="card w-full bg-neutral text-neutral-content shadow-xl">
+                        <form
+                            onsubmit={on_submit}
+                            class="max-w-md w-full mx-auto overflow-hidden shadow-lg bg-ct-dark-200 rounded-2xl p-8 space-y-5"
+                        >
+                            <FormInput label="Firstname" name="firstname" input_ref={firstname_input_ref} handle_onchange={handle_firstname_input}  errors={&*validation_errors} handle_on_input_blur={validate_input_on_blur.clone()} />
+                            <FormInput label="Lastname" name="lastname" input_ref={lastname_input_ref} handle_onchange={handle_lastname_input}  errors={&*validation_errors} handle_on_input_blur={validate_input_on_blur.clone()} />
+                            <FormInput label="Username" name="username" input_type="username" input_ref={username_input_ref} handle_onchange={handle_username_input}  errors={&*validation_errors} handle_on_input_blur={validate_input_on_blur.clone()} />
+                            <FormInput label="Password" name="password" input_type="password" input_ref={password_input_ref} handle_onchange={handle_password_input}  errors={&*validation_errors} handle_on_input_blur={validate_input_on_blur.clone()} />
+                            <FormInput
+                              label="Confirm Password"
+                              name="password_confirm"
+                              input_type="password"
+                              input_ref={password_confirm_input_ref}
+                              handle_onchange={handle_password_confirm_input}
+                              errors={&*validation_errors}
+                              handle_on_input_blur={validate_input_on_blur.clone()}
+                            />
+                            <span class="block">
+                              {"Already have an account?"} {" "}
+                            <Link<Route> to={Route::Login} classes="text-ct-blue-600">{"Login Here"}</Link<Route>>
+                            </span>
+                            <SubmitButton
+                              loading={store.page_loading}
+                            >
+                             {" Sign Up"}
+                            </SubmitButton>
+                        </form>
+                    </div>
+                </div>
+            </section>
+            <Footer/>
+        </>
     }
 }

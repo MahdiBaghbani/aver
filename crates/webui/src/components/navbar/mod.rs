@@ -3,16 +3,21 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
+pub mod user;
+pub mod apps;
+pub mod notifications;
+pub mod search;
+
 use crate::{
     api::user_api::api_logout_user,
     router::{self},
     store::{set_auth_user, set_page_loading, set_show_alert, Store},
 };
 
-use super::navi::apps::NavbarAppsMenu;
-use super::navi::notifications::NavbarNotifications;
-use super::navi::search::NavbarSearch;
-use super::navi::user::NavbarUserMenu;
+use self::apps::NavbarAppsMenu;
+use self::notifications::NavbarNotifications;
+use self::search::NavbarSearch;
+use self::user::NavbarUserMenu;
 
 #[function_component(Navbar)]
 pub fn navbar_component() -> Html {
